@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/code-art/gin-im/util"
 	"gorm.io/gorm"
@@ -16,9 +17,10 @@ type UserBasic struct {
 	Identity      string
 	ClientIP      string
 	ClientPort    string
-	LoginTime     uint64
-	HeartBeatTime uint64
-	LogOutTime    uint64
+	Salt          string 
+	LoginTime     time.Time
+	HeartBeatTime time.Time
+	LogOutTime    time.Time
 	IsLogOut      bool
 	DeviceInfo    string
 }
@@ -53,4 +55,26 @@ func UpdateUser(user UserBasic) *gorm.DB {
 			Phone:    user.Phone,
 			Email:    user.Email,
 		})
+}
+
+func FindUserByName(name string) UserBasic {
+	user := UserBasic{}
+	util.DB.Where("name = ?", name).First(&user)
+	return user
+}
+
+func FindUserByNameAndPwd(name, password string) UserBasic {
+	user := UserBasic{}
+	util.DB.Where("name = ? and password = ?", name, password).First(&user)
+	return user
+}
+
+func FindUserByPhone(phone string) *gorm.DB {
+	user := UserBasic{}
+	return util.DB.Where("phone = ?", phone).First(&user)
+}
+
+func FindUserByEmail(email string) *gorm.DB {
+	user := UserBasic{}
+	return util.DB.Where("email = ?", email).First(&user)
 }

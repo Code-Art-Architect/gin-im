@@ -2,10 +2,13 @@ package service
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/code-art/gin-im/model"
+	"github.com/code-art/gin-im/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,6 +25,37 @@ func GetUserList(c *gin.Context) {
 	})
 }
 
+// Login
+// @Summary 登录
+// @Tags 用户模块
+// @Param username query string false "用户名"
+// @Param password query string false "密码"
+// @Success 200 {string} json{"code", "message"}
+// @Router /user/login [POST]
+func Login(c *gin.Context) {
+	username := c.Query("username")
+	password := c.Query("password")
+	user := model.FindUserByName(username)
+	if user.Name == "" {
+		c.JSON(400, gin.H{
+			"message": "该用户不存在",
+		})
+		return
+	}
+
+	flag := util.ValidPassword(password, user.Salt, user.Password)
+	if !flag {
+		c.JSON(400, gin.H{
+			"message": "密码错误",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": user,
+	})
+}
+
 // CreateUser
 // @Summary 添加用户
 // @Tags 用户模块
@@ -30,9 +64,26 @@ func GetUserList(c *gin.Context) {
 // @Success 200 {string} json{"code", "message"}
 // @Router /user/insert [POST]
 func CreateUser(c *gin.Context) {
-	user := model.UserBasic{}
-	user.Name = c.Query("username")
-	user.Password = c.Query("password")
+	user := model.UserBasic{
+		Name: c.Query("username"),
+		Password: c.Query("password"),
+	}
+	user.LoginTime = time.Now()
+	user.LogOutTime = time.Now()
+	user.HeartBeatTime = time.Now()
+	
+	salt := fmt.Sprintf("%06d", rand.Int31())
+	user.Salt = salt
+	
+	data := model.FindUserByName(user.Name)
+	if data.Name != "" {
+		c.JSON(400, gin.H{
+			"message": "用户名已经存在！",
+		})
+		return
+	}
+	
+	user.Password = util.MakePassword(user.Password, salt)
 
 	model.CreateUser(user)
 	c.JSON(200, gin.H{

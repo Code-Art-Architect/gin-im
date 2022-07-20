@@ -58,6 +58,25 @@ paths:
       summary: 获取用户列表
       tags:
       - 用户模块
+  /user/login:
+    post:
+      parameters:
+      - description: 用户名
+        in: query
+        name: username
+        type: string
+      - description: 密码
+        in: query
+        name: password
+        type: string
+      responses:
+        "200":
+          description: code", "message"}
+          schema:
+            type: string
+      summary: 登录
+      tags:
+      - 用户模块
   /user/update:
     put:
       parameters:
