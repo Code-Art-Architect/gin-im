@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/code-art/gin-im/model"
 	"github.com/code-art/gin-im/util"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 // GetUserList
@@ -50,10 +52,14 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
+	
+	pwd := util.MakePassword(password, user.Salt)
+	data := model.FindUserByNameAndPwd(username, pwd) 
 
 	c.JSON(200, gin.H{
-		"message": user,
+		"message": data,
 	})
+	
 }
 
 // CreateUser
@@ -138,5 +144,44 @@ func UpdateUser(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "更新用户成功！",
 		})
+	}
+}
+
+// 防止跨域站点伪造请求
+var upgrade = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+func SendMessage(c *gin.Context) {
+	ws, err := upgrade.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		fmt.Println()
+	}
+	defer func(ws *websocket.Conn) {
+		err = ws.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(ws)
+	
+	MsgHandler(ws, c)
+}
+
+func MsgHandler(ws *websocket.Conn, c *gin.Context) {
+	for {
+		msg, err := util.SubscribeFromRedis(c, util.PublishKey)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("发送消息：", msg)
+
+		t := time.Now().Format("2006-01-02 15:04:05")
+		m := fmt.Sprintf("[ws][%s][%s]", t, msg)
+		err = ws.WriteMessage(1, []byte(m))
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }

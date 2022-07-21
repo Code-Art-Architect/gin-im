@@ -1,18 +1,23 @@
 package util
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-var DB *gorm.DB
+var (
+	DB *gorm.DB
+	Redigo *redis.Client
+)
 
 func InitConfig() {
 	viper.SetConfigName("app")
@@ -38,3 +43,39 @@ func InitMySQL() {
 	dns := viper.GetString("mysql.dns")
 	DB, _ = gorm.Open(mysql.Open(dns), &gorm.Config{Logger: newLogger})
 }
+
+func InitRedis() {
+	Redigo = redis.NewClient(&redis.Options{
+		Addr: viper.GetString("redis.host"),
+		Password: viper.GetString("redis.password"),
+		DB: viper.GetInt("redis.db"),
+		PoolSize: viper.GetInt("redis.poolSize"),
+		MinIdleConns: viper.GetInt("redis.minIdleConnection"),
+	})
+}
+
+const (
+	PublishKey = "webSocket"
+)
+
+// 发送消息到Redis
+func PublishToRedis(c context.Context, channel, msg string) error {
+	fmt.Println("Published: ", msg)
+	return Redigo.Publish(c, channel, msg).Err()
+}
+
+// 订阅Redis
+func SubscribeFromRedis(c context.Context, channel string) (string, error) {
+	sub := Redigo.Subscribe(c, channel)
+	fmt.Println("Subscribed: ", c)
+	m, err := sub.ReceiveMessage(c)
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	
+	fmt.Println("Subscribed: ", m.Payload)
+	return m.Payload, err
+}
+
+

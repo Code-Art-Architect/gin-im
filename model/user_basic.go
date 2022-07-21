@@ -66,6 +66,11 @@ func FindUserByName(name string) UserBasic {
 func FindUserByNameAndPwd(name, password string) UserBasic {
 	user := UserBasic{}
 	util.DB.Where("name = ? and password = ?", name, password).First(&user)
+	
+	// token加密
+	temp := util.Md5Encode(fmt.Sprintf("%d", time.Now().Unix()))
+	util.DB.Model(&user).Where("id = ?", user.ID).Update("identity", temp)
+	user.Identity = temp
 	return user
 }
 

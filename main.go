@@ -8,6 +8,7 @@ import (
 func main() {
 	util.InitConfig()
 	util.InitMySQL()
+	util.InitRedis()
 
 	r := router.Router()
 	r.Run(":8080")
