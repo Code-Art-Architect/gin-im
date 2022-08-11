@@ -52,14 +52,14 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	pwd := util.MakePassword(password, user.Salt)
-	data := model.FindUserByNameAndPwd(username, pwd) 
+	data := model.FindUserByNameAndPwd(username, pwd)
 
 	c.JSON(200, gin.H{
 		"message": data,
 	})
-	
+
 }
 
 // CreateUser
@@ -71,16 +71,16 @@ func Login(c *gin.Context) {
 // @Router /user/insert [POST]
 func CreateUser(c *gin.Context) {
 	user := model.UserBasic{
-		Name: c.Query("username"),
+		Name:     c.Query("username"),
 		Password: c.Query("password"),
 	}
 	user.LoginTime = time.Now()
 	user.LogOutTime = time.Now()
 	user.HeartBeatTime = time.Now()
-	
+
 	salt := fmt.Sprintf("%06d", rand.Int31())
 	user.Salt = salt
-	
+
 	data := model.FindUserByName(user.Name)
 	if data.Name != "" {
 		c.JSON(400, gin.H{
@@ -88,7 +88,7 @@ func CreateUser(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	user.Password = util.MakePassword(user.Password, salt)
 
 	model.CreateUser(user)
@@ -157,15 +157,17 @@ var upgrade = websocket.Upgrader{
 func SendMessage(c *gin.Context) {
 	ws, err := upgrade.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		fmt.Println()
+		fmt.Println(err)
+		return
 	}
+
 	defer func(ws *websocket.Conn) {
 		err = ws.Close()
 		if err != nil {
 			fmt.Println(err)
 		}
 	}(ws)
-	
+
 	MsgHandler(ws, c)
 }
 

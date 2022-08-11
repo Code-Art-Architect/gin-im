@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	DB *gorm.DB
+	DB     *gorm.DB
 	Redigo *redis.Client
 )
 
@@ -46,10 +46,10 @@ func InitMySQL() {
 
 func InitRedis() {
 	Redigo = redis.NewClient(&redis.Options{
-		Addr: viper.GetString("redis.host"),
-		Password: viper.GetString("redis.password"),
-		DB: viper.GetInt("redis.db"),
-		PoolSize: viper.GetInt("redis.poolSize"),
+		Addr:         viper.GetString("redis.host"),
+		Password:     viper.GetString("redis.password"),
+		DB:           viper.GetInt("redis.db"),
+		PoolSize:     viper.GetInt("redis.poolSize"),
 		MinIdleConns: viper.GetInt("redis.minIdleConnection"),
 	})
 }
@@ -60,22 +60,27 @@ const (
 
 // 发送消息到Redis
 func PublishToRedis(c context.Context, channel, msg string) error {
+	var err error
 	fmt.Println("Published: ", msg)
-	return Redigo.Publish(c, channel, msg).Err()
+
+	err = Redigo.Publish(c, channel, msg).Err()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return err
 }
 
 // 订阅Redis
 func SubscribeFromRedis(c context.Context, channel string) (string, error) {
 	sub := Redigo.Subscribe(c, channel)
-	fmt.Println("Subscribed: ", c)
+	fmt.Println("Subscribed: ", sub)
 	m, err := sub.ReceiveMessage(c)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
-	
+
 	fmt.Println("Subscribed: ", m.Payload)
 	return m.Payload, err
 }
-
-
