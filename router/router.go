@@ -20,9 +20,10 @@ func Router() *gin.Engine {
 	r.DELETE("/user/delete", service.DeleteUser)
 	r.PUT("/user/update", service.UpdateUser)
 	r.POST("/user/login", service.Login)
-	
+
 	// 发送消息
 	r.GET("/user/msg", service.SendMessage)
+	r.GET("/user/sendUMsg", service.SendUserMessage)
 
 	return r
 }
