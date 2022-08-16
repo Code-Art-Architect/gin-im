@@ -16,6 +16,7 @@ import (
 func init() {
 	go udpSendProc()
 	go udpReceiveProc()
+	fmt.Println("init goroutine ")
 }
 
 type Message struct {
@@ -96,6 +97,7 @@ func sendProc(node *Node) {
 	for {
 		select {
 		case data := <-node.DataQueue:
+			fmt.Println("[ws]sendProc >>>> msg :", string(data))
 			err := node.Conn.WriteMessage(websocket.TextMessage, data)
 			if err != nil {
 				fmt.Println(err)
@@ -137,6 +139,7 @@ func udpSendProc() {
 	for {
 		select {
 		case data := <-udpSendChan:
+			fmt.Println("udpSendProc  data :", string(data))
 			_, err := con.Write(data)
 			if err != nil {
 				fmt.Println(err)
@@ -146,7 +149,7 @@ func udpSendProc() {
 	}
 }
 
-// 完成udp数据发送协程
+// 完成udp数据接收协程
 func udpReceiveProc() {
 	con, err := net.ListenUDP("udp", &net.UDPAddr{
 		IP:   net.IPv4zero,
@@ -164,6 +167,7 @@ func udpReceiveProc() {
 			fmt.Println(err)
 			return
 		}
+		fmt.Println("udpReceiveProc  data :", string(buf[0:n]))
 		dispatch(buf[0:n])
 	}
 }
@@ -178,7 +182,7 @@ func dispatch(bytes []byte) {
 	}
 	switch msg.Type {
 	case 1:
-		sendMsg(msg.FromId, bytes)
+		sendMsg(msg.TargetId, bytes)
 	case 2:
 		sendGroupMsg()
 	case 3:
@@ -195,9 +199,9 @@ func sendGroupMsg() {
 }
 
 func sendMsg(userId int64, msg []byte) {
-	rwLocker.RLocker()
+	rwLocker.RLock()
 	node, ok := clientMap[userId]
-	rwLocker.Unlock()
+	rwLocker.RUnlock()
 	if ok {
 		node.DataQueue <- msg
 	}
