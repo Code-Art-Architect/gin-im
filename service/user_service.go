@@ -36,12 +36,12 @@ func GetUserList(c *gin.Context) {
 // @Success 200 {string} json{"code", "message"}
 // @Router /user/login [POST]
 func Login(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 	user := model.FindUserByName(username)
 	if user.Name == "" {
 		c.JSON(400, gin.H{
-			"message": "该用户不存在",
+			"msg": "该用户不存在",
 		})
 		return
 	}
@@ -49,7 +49,7 @@ func Login(c *gin.Context) {
 	flag := util.ValidPassword(password, user.Salt, user.Password)
 	if !flag {
 		c.JSON(400, gin.H{
-			"message": "密码错误",
+			"msg": "密码错误",
 		})
 		return
 	}
@@ -58,9 +58,10 @@ func Login(c *gin.Context) {
 	data := model.FindUserByNameAndPwd(username, pwd)
 
 	c.JSON(200, gin.H{
-		"message": data,
+		"code": http.StatusOK,
+		"msg":  "登录成功！",
+		"data": data,
 	})
-
 }
 
 // CreateUser
