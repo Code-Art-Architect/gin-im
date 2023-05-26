@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -15,15 +17,21 @@ func Router() *gin.Engine {
 	docs.SwaggerInfo.BasePath = ""
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	
+
 	// 静态资源
 	r.Static("/asset", "asset/")
 	r.LoadHTMLGlob("view/**/*.html")
-	
+
 	// 首页
 	r.GET("/", service.GetIndex)
 	r.GET("/index", service.GetIndex)
-	
+
+	// 通用页面跳转
+	r.GET("/:path1/:path2.shtml", func(c *gin.Context) {
+		url := c.Request.URL.Path
+		c.HTML(http.StatusOK, url, nil)
+	})
+
 	// 用户模块
 	r.GET("/user/list", service.GetUserList)
 	r.POST("/user/insert", service.CreateUser)
