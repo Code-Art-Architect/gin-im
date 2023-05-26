@@ -92,3 +92,5 @@ fabric.properties
 /.idea/vcs.xml
 .idea/gin-im.iml
 .idea/inspectionProfiles/Project_Default.xml
+
+.idea
