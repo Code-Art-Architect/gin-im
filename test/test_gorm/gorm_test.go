@@ -3,9 +3,10 @@ package test_gorm
 import (
 	"testing"
 
-	"github.com/code-art/gin-im/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/code-art/gin-im/model"
 )
 
 var db *gorm.DB
@@ -21,8 +22,8 @@ func init() {
 }
 
 func TestMigrate(t *testing.T) {
-	//_ = db.AutoMigrate(&model.UserBasic{})
-	//_ = db.AutoMigrate(&model.Message{})
+	// _ = db.AutoMigrate(&model.UserBasic{})
+	// _ = db.AutoMigrate(&model.Message{})
 	_ = db.AutoMigrate(&model.Contact{})
 	_ = db.AutoMigrate(&model.GroupBasic{})
 }

@@ -8,10 +8,11 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/code-art/gin-im/model"
-	"github.com/code-art/gin-im/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+
+	"github.com/code-art/gin-im/model"
+	"github.com/code-art/gin-im/util"
 )
 
 // GetUserList

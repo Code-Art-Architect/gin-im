@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/code-art/gin-im/util"
 	"gorm.io/gorm"
+
+	"github.com/code-art/gin-im/util"
 )
 
 type UserBasic struct {
@@ -17,7 +18,7 @@ type UserBasic struct {
 	Identity      string
 	ClientIP      string
 	ClientPort    string
-	Salt          string 
+	Salt          string
 	LoginTime     time.Time
 	HeartBeatTime time.Time
 	LogOutTime    time.Time
@@ -66,7 +67,7 @@ func FindUserByName(name string) UserBasic {
 func FindUserByNameAndPwd(name, password string) UserBasic {
 	user := UserBasic{}
 	util.DB.Where("name = ? and password = ?", name, password).First(&user)
-	
+
 	// token加密
 	temp := util.Md5Encode(fmt.Sprintf("%d", time.Now().Unix()))
 	util.DB.Model(&user).Where("id = ?", user.ID).Update("identity", temp)

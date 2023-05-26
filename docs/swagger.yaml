@@ -1,26 +1,26 @@
 info:
-  contact: {}
+  contact: { }
 paths:
   /index:
     get:
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             type: string
       tags:
-      - 首页
+        - 首页
   /user/delete:
     delete:
       parameters:
-      - description: id
-        in: query
-        name: id
-        type: string
+        - description: id
+          in: query
+          name: id
+          type: string
       responses:
         "200":
           description: code", "message"}
@@ -28,18 +28,18 @@ paths:
             type: string
       summary: 删除用户
       tags:
-      - 用户模块
+        - 用户模块
   /user/insert:
     post:
       parameters:
-      - description: 用户名
-        in: query
-        name: username
-        type: string
-      - description: 密码
-        in: query
-        name: password
-        type: string
+        - description: 用户名
+          in: query
+          name: username
+          type: string
+        - description: 密码
+          in: query
+          name: password
+          type: string
       responses:
         "200":
           description: code", "message"}
@@ -47,7 +47,7 @@ paths:
             type: string
       summary: 添加用户
       tags:
-      - 用户模块
+        - 用户模块
   /user/list:
     get:
       responses:
@@ -57,18 +57,18 @@ paths:
             type: string
       summary: 获取用户列表
       tags:
-      - 用户模块
+        - 用户模块
   /user/login:
     post:
       parameters:
-      - description: 用户名
-        in: query
-        name: username
-        type: string
-      - description: 密码
-        in: query
-        name: password
-        type: string
+        - description: 用户名
+          in: query
+          name: username
+          type: string
+        - description: 密码
+          in: query
+          name: password
+          type: string
       responses:
         "200":
           description: code", "message"}
@@ -76,30 +76,30 @@ paths:
             type: string
       summary: 登录
       tags:
-      - 用户模块
+        - 用户模块
   /user/update:
     put:
       parameters:
-      - description: id
-        in: formData
-        name: id
-        type: string
-      - description: username
-        in: formData
-        name: username
-        type: string
-      - description: password
-        in: formData
-        name: password
-        type: string
-      - description: phone
-        in: formData
-        name: phone
-        type: string
-      - description: email
-        in: formData
-        name: email
-        type: string
+        - description: id
+          in: formData
+          name: id
+          type: string
+        - description: username
+          in: formData
+          name: username
+          type: string
+        - description: password
+          in: formData
+          name: password
+          type: string
+        - description: phone
+          in: formData
+          name: phone
+          type: string
+        - description: email
+          in: formData
+          name: email
+          type: string
       responses:
         "200":
           description: code", "message"}
@@ -107,5 +107,5 @@ paths:
             type: string
       summary: 更新用户
       tags:
-      - 用户模块
+        - 用户模块
 swagger: "2.0"

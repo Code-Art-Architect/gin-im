@@ -50,13 +50,13 @@ var rwLocker sync.RWMutex
 
 func Chat(w http.ResponseWriter, r *http.Request) {
 	// 1.获取参数并校验token
-	//token := query.Get("token")
+	// token := query.Get("token")
 	query := r.URL.Query()
 	Id := query.Get("userId")
 	userId, _ := strconv.ParseInt(Id, 10, 64)
-	//msgType := query.Get("type")
-	//targetId := query.Get("targetId")
-	//context := query.Get("context")
+	// msgType := query.Get("type")
+	// targetId := query.Get("targetId")
+	// context := query.Get("context")
 
 	isValid := true // checkToken()
 	conn, err := (&websocket.Upgrader{
