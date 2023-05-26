@@ -115,7 +115,7 @@ func receiveProc(node *Node) {
 			return
 		}
 		broadMsg(data)
-		fmt.Println("")
+		fmt.Println("[ws] <<<<<", data)
 	}
 }
 
@@ -153,7 +153,7 @@ func udpSendProc() {
 func udpReceiveProc() {
 	con, err := net.ListenUDP("udp", &net.UDPAddr{
 		IP:   net.IPv4zero,
-		Port: 6379,
+		Port: 3000,
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -187,6 +187,7 @@ func dispatch(bytes []byte) {
 		sendGroupMsg()
 	case 3:
 		sendAllMsg()
+	case 4:
 	}
 }
 

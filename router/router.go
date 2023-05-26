@@ -5,7 +5,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	docs "github.com/code-art/gin-im/docs"
+	docs "github.com/code-art/gin-im/doc"
 	"github.com/code-art/gin-im/service"
 )
 

@@ -1,4 +1,4 @@
-package test_md5
+package test
 
 import (
 	"fmt"

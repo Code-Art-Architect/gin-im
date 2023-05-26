@@ -11,5 +11,5 @@ func main() {
 	util.InitRedis()
 
 	r := router.Router()
-	r.Run(":8080")
+	_ = r.Run(":8080")
 }
