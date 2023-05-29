@@ -11,19 +11,19 @@ import (
 
 type UserBasic struct {
 	gorm.Model
-	Name          string
-	Password      string
-	Phone         string `valid:"matches(^1[3-9]{1}\\d{9}$)"`
-	Email         string `valid:"email"`
-	Identity      string
-	ClientIP      string
-	ClientPort    string
-	Salt          string
-	LoginTime     time.Time
-	HeartBeatTime time.Time
-	LogOutTime    time.Time
-	IsLogOut      bool
-	DeviceInfo    string
+	Name          string    `json:"name,omitempty"`
+	Password      string    `json:"password,omitempty"`
+	Phone         string    `valid:"matches(^1[3-9]{1}\\d{9}$)" json:"phone,omitempty"`
+	Email         string    `valid:"email" json:"email,omitempty"`
+	Identity      string    `json:"identity,omitempty"`
+	ClientIP      string    `json:"clientIP,omitempty"`
+	ClientPort    string    `json:"clientPort,omitempty"`
+	Salt          string    `json:"salt,omitempty"`
+	LoginTime     time.Time `json:"loginTime"`
+	HeartBeatTime time.Time `json:"heartBeatTime"`
+	LogOutTime    time.Time `json:"logOutTime"`
+	IsLogOut      bool      `json:"isLogOut,omitempty"`
+	DeviceInfo    string    `json:"deviceInfo,omitempty"`
 }
 
 func (table *UserBasic) TableName() string {

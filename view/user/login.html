@@ -1,6 +1,6 @@
 {{define "/user/login.shtml"}}
   <!DOCTYPE html>
-  <html>
+  <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>IM解决方案</title>
@@ -38,7 +38,8 @@
   </div>
   </body>
   </html>
-  <script>
+  <script type="module">
+    import {userId, userInfo} from '/asset/js/store.js'
     const app = new Vue({
       el: '#app',
       data: {
@@ -64,10 +65,9 @@
             if (res.code !== 200) {
               mui.toast(res.msg)
             } else {
-              // userInfo(res.data)
-              // userId(res.data.ID)
-              location.href = `/chat/index.shtml?id=${res.data.id}&token=${res.data.token}`
-              //mui.alert(url)
+              userInfo(res.data)
+              userId(res.data.ID)
+              // location.href = `/chat/index.shtml?id=${res.data.id}&token=${res.data.token}`
             }
           })
         }
