@@ -73,8 +73,8 @@ func Login(c *gin.Context) {
 // @Router /user/insert [POST]
 func CreateUser(c *gin.Context) {
 	user := model.UserBasic{
-		Name:     c.Query("username"),
-		Password: c.Query("password"),
+		Name:     c.PostForm("username"),
+		Password: c.PostForm("password"),
 	}
 	user.LoginTime = time.Now()
 	user.LogOutTime = time.Now()
@@ -94,8 +94,9 @@ func CreateUser(c *gin.Context) {
 	user.Password = util.MakePassword(user.Password, salt)
 
 	model.CreateUser(user)
-	c.JSON(200, gin.H{
-		"message": "添加用户成功！",
+	c.JSON(200, util.R{
+		Code: http.StatusOK,
+		Msg:  "注册成功",
 	})
 }
 

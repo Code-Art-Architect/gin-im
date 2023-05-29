@@ -1,20 +1,12 @@
 String.prototype.startWith = function (str) {
-  if (str == null || str == '' || this.length == 0 || str.length > this.length)
+  if (str == null || str === '' || this.length === 0 || str.length > this.length)
     return false
-  if (this.substr(0, str.length) == str)
-    return true
-  else
-    return false
-  return true
+  return this.substr(0, str.length) === str
 }
 String.prototype.endWith = function (str) {
-  if (str == null || str == '' || this.length == 0 || str.length > this.length)
+  if (str == null || str === '' || this.length === 0 || str.length > this.length)
     return false
-  if (this.substring(this.length - str.length) == str)
-    return true
-  else
-    return false
-  return true
+  return this.substring(this.length - str.length) === str
 }
 
 //日期格式化
@@ -22,7 +14,7 @@ Date.prototype.format = function (format) {
   if (!format) {
     format = 'yyyy-MM-dd'// 默认1997-01-01这样的格式
   }
-  var o = {
+  const o = {
     'M+': this.getMonth() + 1, // month
     'd+': this.getDate(), // day
     'h+': this.getHours(), // hour
@@ -36,16 +28,16 @@ Date.prototype.format = function (format) {
     format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
   }
 
-  for (var k in o) {
+  for (const k in o) {
     if (new RegExp('(' + k + ')').test(format)) {
-      format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length))
+      format = format.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length))
     }
   }
   return format
 }
 
 
-var config = {
+const config = {
   serverUrl: '//' + location.host
 }
 
@@ -54,10 +46,10 @@ function Core() {
 }
 
 Core.prototype.numformat = function () {
-  var num = (num || 0).toString(), result = ''
-  var suffix = ''
+  let num = (num || 0).toString(), result = ''
+  let suffix = ''
   if (num.indexOf('.') > -1) {
-    var t = num.split('.')
+    const t = num.split('.')
     num = t[0]
     suffix = '.' + t[1]
 
@@ -73,6 +65,7 @@ Core.prototype.numformat = function () {
 
   return result + suffix
 }
+
 Core.prototype.token = function (d) {
   d.createAt = new Date()
   return this.data('token', d)
@@ -81,14 +74,17 @@ Core.prototype.token = function (d) {
 Core.prototype.error = function (d) {
   alert(d)
 }
+
 Core.prototype.alert = function (d) {
   alert(d)
 }
+
 //用于存储信息
 Core.prototype.data = function (k, d) {
-  //console.log("data",k,d)
+  let o
+//console.log("data",k,d)
   if (typeof d == 'undefined') {
-    var o = localStorage.getItem(k)
+    o = localStorage.getItem(k)
     if (o == null) {
       return null
     } else {
@@ -100,12 +96,13 @@ Core.prototype.data = function (k, d) {
   } else if (null == d) {
     return localStorage.removeItem(k)
   } else {
-    var o = {}
+    o = {}
     o[k] = d
     return localStorage.setItem(k, JSON.stringify(o))
   }
 }
-//用于存储信息
+
+// 用于存储信息
 Core.prototype.api = function (uri) {
   if (uri.startWith('/')) {
     return config.serverUrl + uri
@@ -113,10 +110,11 @@ Core.prototype.api = function (uri) {
     return config.serverUrl + '/' + uri
   }
 }
+
 Core.prototype.post = function (uri, data, fn) {
-  var url = this.api(uri)
+  const url = this.api(uri)
   return new Promise(function (resolve, reject) {
-    var xhr = new XMLHttpRequest()
+    const xhr = new XMLHttpRequest()
     xhr.open('POST', url, true)
     // 添加http头，发送信息至服务器时内容编码类型
     xhr.setRequestHeader(
@@ -124,83 +122,77 @@ Core.prototype.post = function (uri, data, fn) {
       'application/x-www-form-urlencoded'
     )
     xhr.onreadystatechange = function () {
-      if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+      if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
         resolve(JSON.parse(xhr.responseText))
       }
     }
     xhr.onerror = function () {
-      reject({'code': -1, 'msg': '服务器繁忙'})
+      reject({ 'code': -1, 'msg': '服务器繁忙' })
     }
-    var _data = []
-    for (var i in data) {
+    const _data = []
+    for (const i in data) {
       _data.push(i + '=' + encodeURI(data[i]))
     }
     xhr.send(_data.join('&'))
-
   })
 }
 Core.prototype.uploadfile = function (uri, dom) {
-  var url = this.api(uri)
+  const url = this.api(uri)
   return new Promise(function (resolve, reject) {
-    var xhr = new XMLHttpRequest()
+    const xhr = new XMLHttpRequest()
     xhr.open('POST', url, true)
     xhr.onreadystatechange = function () {
-      if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+      if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
         resolve(JSON.parse(xhr.responseText))
       }
     }
     xhr.onerror = function () {
-      reject({'code': -1, 'msg': '服务器繁忙'})
+      reject({ 'code': -1, 'msg': '服务器繁忙' })
     }
 
-    var formdata = new FormData()
-    formdata.append('file', dom.files[0])
-    xhr.send(formdata)
+    const formData = new FormData()
+    formData.append('file', dom.files[0])
+    xhr.send(formData)
   })
-
-
 }
 
 Core.prototype.uploadmp3 = function (uri, blob) {
-
-  var url = this.api(uri)
+  const url = this.api(uri)
   return new Promise(function (resolve, reject) {
-    var xhr = new XMLHttpRequest()
+    const xhr = new XMLHttpRequest()
     xhr.open('POST', url, true)
     xhr.onreadystatechange = function () {
-      if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+      if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
         resolve(JSON.parse(xhr.responseText))
       }
     }
     xhr.onerror = function () {
-      reject({'code': -1, 'msg': '服务器繁忙'})
+      reject({ 'code': -1, 'msg': '服务器繁忙' })
     }
 
-    var formdata = new FormData()
-    formdata.append('filetype', '.mp3')
-    formdata.append('file', blob)
-    xhr.send(formdata)
+    const formData = new FormData()
+    formData.append('filetype', '.mp3')
+    formData.append('file', blob)
+    xhr.send(formData)
   })
-
 }
 
 Core.prototype.parseUri = function (url) {
   if (typeof url == 'undefined') {
     url = location.href
   }
-  var query = url.substr(url.indexOf('?'))
+  let query = url.substr(url.indexOf('?'))
   query = query.substr(1)
-  var reg = /([^=&\s]+)[=\s]*([^=&\s]*)/g
-  var obj = {}
+  const reg = /([^=&\s]+)[=\s]*([^=&\s]*)/g
+  const obj = {}
   while (reg.exec(query)) {
     obj[RegExp.$1] = decodeURI(RegExp.$2)
   }
   return obj
 }
 Core.prototype.parseQuery = function (name) {
-
-  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)') //构造一个含有目标参数的正则表达式对象
-  var r = window.location.search.substr(1).match(reg)  //匹配目标参数
+  const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)') //构造一个含有目标参数的正则表达式对象
+  const r = window.location.search.substr(1).match(reg)  //匹配目标参数
   if (r != null) return decodeURI(unescape(r[2]))
   return null //返回参数值
 }
@@ -212,11 +204,8 @@ Core.prototype.ismobile = function (mobile) {
   return /^[1][34578][0-9]{9}$/.test(mobile)
 }
 
-Core.prototype.test = function (reg, data) {
-  var reg = new RegExp(reg) //构造一个含有目标参数的正则表达式对象
+Core.prototype.test = function (regStr, data) {
+  let reg = new RegExp(regStr) //构造一个含有目标参数的正则表达式对象
   return reg.test(data)
 }
 window.util = new Core()
-
-
-	

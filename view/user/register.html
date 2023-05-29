@@ -40,25 +40,21 @@
       el: '#app',
       data: {
         user: {
-          mobile: '',
-          passwd: ''
+          username: '',
+          password: ''
         }
       },
       methods: {
         login: function () {
-          //检测手机号是否正确
-          console.log('login')
-          //检测密码是否为空
-
-          //网络请求
-          //封装了promis
-          util.post('user/register', this.user).then(res => {
+          util.post('user/insert', this.user).then(res => {
             console.log(res)
             if (res.code !== 200) {
               mui.toast(res.msg)
             } else {
-              //location.replace("//127.0.0.1/demo/index.shtml")
-              mui.toast('登录成功,即将跳转')
+              mui.toast('注册成功，2秒后跳转登录页面')
+              setTimeout(function () {
+                location.href = "/user/login.shtml"
+              }, 2000)
             }
           })
         }
