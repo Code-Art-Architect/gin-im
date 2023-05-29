@@ -1,5 +1,5 @@
 {{define "/chat/main.shtml"}}
-  <div v-show="win!='main'">
+  <div v-show="win !== 'main'">
     <header class="mui-bar mui-bar-nav">
       <a class="mui-icon mui-icon-left-nav mui-pull-left" @tap="win='main'"></a>
       <h1 class="mui-title" v-text="title"></h1>
@@ -15,10 +15,9 @@
         <!-- v-if="(item.ismine? item.msg.TargetId==msgcontext.TargetId : item.msg.userId==msgcontext.TargetId )" -->
         <li class="chat " :class="item.ismine?'mine':'other'"
             v-for="item in msgList"
-            v-if="item.msg.cmd==msgcontext.cmd 
-		&& (( item.msg.cmd==10 &&  (item.ismine? item.msg.dstid==msgcontext.dstid : item.msg.dstid==msgcontext.userid )) 
-		|| ( item.msg.cmd==11 &&  (item.msg.dstid==msgcontext.dstid))) ">
-
+            v-if="item.msg.cmd === msgContext.cmd && 
+            (( item.msg.cmd==10 &&  (item.ismine? item.msg.dstid === msgContext.dstid : item.msg.dstid === msgContext.userid )) ||
+            ( item.msg.cmd==11 &&  (item.msg.dstid === msgContext.dstid))) ">
           <div>
             <img class="avatar" :src="item.user.avatar || '/asset/images/avatar0.png'" alt=""/>
           </div>
@@ -89,7 +88,7 @@
   <audio id="video" style="display: none"></audio>
   <audio id="video4play" style="display: none"></audio>
 
-  <div id='sound-alert' class="rprogress" v-show="showProcess">
+  <div id="sound-alert" class="rprogress" v-show="showProcess">
     <div class="rschedule"></div>
     <div class="r-sigh">!</div>
     <div id="audio-tips" class="rsalert">手指上滑，取消发送</div>

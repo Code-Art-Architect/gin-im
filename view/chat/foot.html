@@ -1,5 +1,7 @@
 {{define "/chat/foot.shtml"}}
-  <script>
+  <script type="module">
+    import { core } from '/asset/js/util.js'
+
     const app = new Vue({
       el: '#app',
       data: {
@@ -159,7 +161,8 @@
         dispatchPlugin(item) {
           switch (item.id) {
             case 'upload':
-            case 'camera':break
+            case 'camera':
+              break
             default:
               mui.toast('系统暂不支持,请自行扩展')
           }
@@ -273,7 +276,7 @@
           }.bind(this))
         },
         initWebSocket: function () {
-          const url = 'ws://' + location.host + '/chat?id=' + userId() + '&token=' + util.parseQuery('token')
+          const url = `ws://${location.host}/chat?id=${userId()}&token=${core.parseQuery('token')}`
           this.webSocket = new WebSocket(url)
           //消息处理
           this.webSocket.onmessage = function (evt) {
@@ -399,7 +402,7 @@
     }
 
     function userId() {
-      return parseInt(util.parseQuery('id'))
+      return parseInt(core.parseQuery('id'))
     }
   </script>
 {{end}}

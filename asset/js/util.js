@@ -192,6 +192,7 @@ Core.prototype.parseUri = function (url) {
   }
   return obj
 }
+
 Core.prototype.parseQuery = function (name) {
   const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)') //构造一个含有目标参数的正则表达式对象
   const r = window.location.search.substr(1).match(reg)  //匹配目标参数
@@ -199,11 +200,12 @@ Core.prototype.parseQuery = function (name) {
   return null //返回参数值
 }
 
-Core.prototype.isemail = function (email) {
-  return /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+[\\.][a-zA-Z0-9_-]+$/.test(email)
+Core.prototype.isEmail = function (email) {
+  return /^[a-zA-Z\d_-]+@[a-zA-Z\d_-]+[\\.][a-zA-Z\d_-]+$/.test(email)
 }
-Core.prototype.ismobile = function (mobile) {
-  return /^[1][34578][0-9]{9}$/.test(mobile)
+
+Core.prototype.isMobile = function (mobile) {
+  return /^[1][34578]\d{9}$/.test(mobile)
 }
 
 Core.prototype.test = function (regStr, data) {
@@ -213,4 +215,4 @@ Core.prototype.test = function (regStr, data) {
 
 const core = new Core()
 
-export default core
+export { core }
