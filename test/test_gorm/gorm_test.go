@@ -34,11 +34,11 @@ func TestMigrate(t *testing.T) {
 
 func TestAddUser(t *testing.T) {
 	util.DB.Create(&model.UserBasic{
-		Name:          "洛必达",
+		Name:          "特朗普",
 		Password:      util.Md5Encode("123456"),
 		Phone:         "13770367889",
 		Email:         "152944@gmail.com",
-		DeviceInfo:    "iphone 14 Pro Max",
+		DeviceInfo:    "Macbook Pro M1 MAX",
 		LoginTime:     time.Now(),
 		LogOutTime:    time.Now(),
 		HeartBeatTime: time.Now(),

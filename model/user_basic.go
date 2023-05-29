@@ -24,6 +24,7 @@ type UserBasic struct {
 	LogOutTime    time.Time `json:"logOutTime"`
 	IsLogOut      bool      `json:"isLogOut,omitempty"`
 	DeviceInfo    string    `json:"deviceInfo,omitempty"`
+	Avatar        string    `json:"avatar,omitempty"`
 }
 
 func (table *UserBasic) TableName() string {

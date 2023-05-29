@@ -1,6 +1,6 @@
 {{define "/chat/createcom.shtml"}}
   <!DOCTYPE html>
-  <html>
+  <html lang="en">
   <head>
       {{template "/chat/head.shtml"}}
     <style>
@@ -51,7 +51,7 @@
                   placeholder="请输入群名称">
 
           <img id="head-img" :src="com.icon" style="border-radius:50%;"
-                  class="mui-media-object mui-pull-right head-img">
+                  class="mui-media-object mui-pull-right head-img" alt="">
           <div class="mui-media-body">
             头像
             <p class="mui-ellipsis">点击右侧上传头像</p></div>
@@ -60,8 +60,6 @@
     </ul>
 
     <div class="mui-input-group">
-
-
       <div class="mui-input-row">
         <label>类型</label>
         <select v-model="com.cate" class="mui-input-clear mui-input">

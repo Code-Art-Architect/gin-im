@@ -66,7 +66,7 @@
               const { data } = res
               userInfo(data)
               userId(data.ID)
-              location.href = `/chat/index.shtml?id=${data.ID}&token=${data.token}`
+              location.href = `/index?userId=${data.ID}&token=${data.token}`
             }
           })
         }

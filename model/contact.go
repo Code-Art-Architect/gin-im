@@ -1,6 +1,12 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+
+	"github.com/code-art/gin-im/util"
+)
 
 type Contact struct {
 	gorm.Model
@@ -12,4 +18,17 @@ type Contact struct {
 
 func (c *Contact) TableName() string {
 	return "contact"
+}
+
+func SearchFriend(userId uint) []UserBasic {
+	var contacts []Contact
+	var objIds []uint64
+	var users []UserBasic
+	util.DB.Where("owner_id = ?", userId).Find(&contacts)
+	for _, contact := range contacts {
+		fmt.Println(contact)
+		objIds = append(objIds, uint64(contact.TargetId))
+	}
+	util.DB.Where("id in ?", objIds).Find(&users)
+	return users
 }

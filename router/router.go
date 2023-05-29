@@ -26,6 +26,9 @@ func Router() *gin.Engine {
 	r.GET("/", service.GetIndex)
 	r.GET("/index", service.GetIndex)
 
+	// 搜索好友
+	r.GET("/contact/load-friends", service.SearchFriend)
+
 	// 通用页面跳转
 	r.GET("/:path1/:path2.shtml", func(c *gin.Context) {
 		url := c.Request.URL.Path

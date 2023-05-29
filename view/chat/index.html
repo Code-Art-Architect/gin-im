@@ -2,7 +2,6 @@
   <!DOCTYPE html>
   <html lang="en">
   <head>
-    <!--js include-->
       {{template "/chat/head.shtml"}}
   </head>
   <body>
@@ -23,7 +22,8 @@
   </body>
   </html>
   <script type="module">
-    import { core } from '/asset/js/util.js'
+    import { core } from '/asset/js/util.js'  
+    import { userId } from '../../asset/js/store.js'
 
     const app = new Vue({
       el: '#app',
@@ -99,7 +99,6 @@
             name: '名片',
             id: 'person'
           }
-
         ],
         timer: 0,
         recorder: {},
@@ -115,7 +114,7 @@
         const user = userInfo()
         if (!!user) {
           this.profile.avatar = user.avatar
-          this.profile.nickname = user.nickname
+          this.profile.nickname = user.name
           this.profile.memo = user.memo
         }
         this.initWebSocket()
@@ -223,8 +222,8 @@
         showVX() {
           mui.alert('请加微信号jiepool-winlion索取')
         },
-        showMsg: function (user, msg) {
-          const data = {}
+        showMsg(user, msg) {
+          const data = {} 
           data.ismine = userId() === msg.userid
           //console.log(data.ismine,userId(),msg.userid)
           data.user = user
@@ -236,7 +235,6 @@
             window.scrollTo(0, document.getElementById('convo').offsetHeight)
             clearTimeout(that.timer)
           }, 100)
-
         },
         startRecord() {
 
@@ -267,12 +265,12 @@
           //console.log("sendaudiomsg",this.msglist);
           this.webSocket.send(JSON.stringify(msg))
         },
-        singleMsg: function (user) {
+        singleMsg(user) {
           //console.log(user)
           this.win = 'single'
-          this.title = '和' + user.nickname + '聊天中'
-          this.msgContext.dstid = parseInt(user.id)
-          this.msgContext.cmd = 10
+          this.title = '和' + user.name + '聊天中'
+          this.msgContext.dstid = parseInt(user.ID)
+          this.msgContext.cmd = 1
         },
         groupMsg: function (group) {
           this.win = 'group'
@@ -280,13 +278,13 @@
           this.msgContext.dstid = parseInt(group.id)
           this.msgContext.cmd = 11
         },
-        loadUserInfo: function (userid, cb) {
+        loadUserInfo(userid, cb) {
           userid = '' + userid
-          const userinfo = this.usermap[userid]
+          const userinfo = this.userMap[userid]
           if (!userinfo) {
             post('user/find', { id: parseInt(userid) }, function (res) {
               cb(res.data)
-              this.usermap[userid] = res.data
+              this.userMap[userid] = res.data
             }.bind(this))
           } else {
             cb(userinfo)
@@ -324,25 +322,29 @@
         sendMsg() {
 
         },
-        loadFriends: function () {
+        loadFriends() {
           const that = this
-          post('contact/loadfriend', { userid: userId() }, function (res) {
-            that.friends = res.rows || []
-            const usermap = this.usermap
-            for (const i in res.rows) {
-              const k = '' + res.rows[i].id
-              usermap[k] = res.rows[i]
+          axios.get('contact/load-friends', {
+            params: {
+              userId: userId()
             }
-            this.usermap = usermap
-          }.bind(this))
+          }).then(({ data }) => {
+            that.friends = data.rows || []
+            const userMap = this.userMap
+            for (const i in data.rows) {
+              const k = '' + data.rows[i].ID
+              userMap[k] = data.rows[i]
+            }
+            this.userMap = userMap
+          })
         },
-        loadCommunities: function () {
+        loadCommunities() {
           const that = this
-          post('contact/loadcommunity', { userid: userId() }, function (res) {
+          post('contact/load-communities', { userid: userId() }, function (res) {
             that.communities = res.rows || []
           })
         },
-        addFriend: function () {
+        addFriend() {
           const that = this
           mui.prompt('', '请输入好友ID', '加好友', ['取消', '确认'], function (e) {
             if (e.index === 1) {
@@ -358,7 +360,7 @@
           }, 'div')
           document.querySelector('.mui-popup-input input').type = 'number'
         },
-        _addFriend: function (dstobj) {
+        _addFriend(dstobj) {
           const that = this
           post('contact/addfriend', { dstid: dstobj, userid: userId() }, function (res) {
             if (res.code === 0) {
@@ -369,9 +371,9 @@
             }
           })
         },
-        _joinCommunity: function (dstobj) {
+        _joinCommunity(dstobj) {
           const that = this
-          post('contact/joincommunity', { dstid: dstobj, 'userid': userId() }, function (res) {
+          post('contact/join-community', { dstid: dstobj, 'userid': userId() }, function (res) {
             if (res.code === 0) {
               mui.toast('添加成功')
 
@@ -421,10 +423,6 @@
           app.sendPicMsg(res.data)
         }
       })
-    }
-
-    function userId() {
-      return parseInt(core.parseQuery('id'))
     }
   </script>
 {{end}}
