@@ -76,12 +76,12 @@
         }
       }
       const _data = []
-      const formdata = new FormData()
+      const formData = new FormData()
       if (!!userId()) {
-        formdata.append('userid', userId())
+        formData.append('userid', userId())
       }
-      formdata.append('file', dom.files[0])
-      xhr.send(formdata)
+      formData.append('file', dom.files[0])
+      xhr.send(formData)
     }
 
     function uploadBlob(uri, blob, filetype, fn) {
@@ -119,12 +119,11 @@
       width: 100%;
       padding-top: 10px;
       position: fixed;
-      bottom: 0px;
+      bottom: 0;
       background-color: #FFFFFF;
     }
 
     .item-1 {
-      height: 50px;
       height: 50px;
       padding: 5px 5px 5px 5px;
     }
@@ -141,12 +140,10 @@
 
     .item-3 {
       height: 50px;
-      height: 50px;
       padding: 5px 5px 5px 5px;
     }
 
     .item-4 {
-      height: 50px;
       height: 50px;
       padding: 5px 5px 5px 5px;
     }
