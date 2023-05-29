@@ -30,4 +30,4 @@ if (!userId() && !isOpen) {
   // location.href = "login.shtml";
 }
 
-export {userId, userInfo}
+export { userId, userInfo }

@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="/asset/css/login.css"/>
     <script src="/asset/plugins/mui/js/mui.js"></script>
     <script src="/asset/js/vue.min.js"></script>
-    <script src="/asset/js/util.js"></script>
   </head>
   <body>
   <header class="mui-bar mui-bar-nav">
@@ -24,7 +23,8 @@
       <div class="mui-input-row">
         <label for="password">密码</label>
         <input id="password" v-model="user.password" placeholder="请输入密码" type="password"
-                class="mui-input-clear mui-input">
+               class="mui-input-clear mui-input"
+        >
       </div>
     </form>
     <div class="mui-content-padded">
@@ -42,6 +42,7 @@
   </html>
   <script type="module">
     import { userId, userInfo } from '/asset/js/store.js'
+    import core from '/asset/js/util.js'
 
     const app = new Vue({
       el: '#app',
@@ -53,7 +54,7 @@
       },
       methods: {
         login() {
-          util.post('user/login', this.user, {
+          core.post('user/login', this.user, {
             headers: {
               'Content-Type': 'x-www-form-urlencoded'
             }

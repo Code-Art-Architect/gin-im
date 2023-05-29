@@ -3,13 +3,14 @@ String.prototype.startWith = function (str) {
     return false
   return this.substr(0, str.length) === str
 }
+
 String.prototype.endWith = function (str) {
   if (str == null || str === '' || this.length === 0 || str.length > this.length)
     return false
   return this.substring(this.length - str.length) === str
 }
 
-//日期格式化
+// 日期格式化
 Date.prototype.format = function (format) {
   if (!format) {
     format = 'yyyy-MM-dd'// 默认1997-01-01这样的格式
@@ -136,6 +137,7 @@ Core.prototype.post = function (uri, data, fn) {
     xhr.send(_data.join('&'))
   })
 }
+
 Core.prototype.uploadfile = function (uri, dom) {
   const url = this.api(uri)
   return new Promise(function (resolve, reject) {
@@ -198,7 +200,7 @@ Core.prototype.parseQuery = function (name) {
 }
 
 Core.prototype.isemail = function (email) {
-  return /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+[\.][a-zA-Z0-9_-]+$/.test(email)
+  return /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+[\\.][a-zA-Z0-9_-]+$/.test(email)
 }
 Core.prototype.ismobile = function (mobile) {
   return /^[1][34578][0-9]{9}$/.test(mobile)
@@ -208,4 +210,7 @@ Core.prototype.test = function (regStr, data) {
   let reg = new RegExp(regStr) //构造一个含有目标参数的正则表达式对象
   return reg.test(data)
 }
-window.util = new Core()
+
+const core = new Core()
+
+export default core
