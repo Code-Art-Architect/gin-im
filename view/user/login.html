@@ -11,10 +11,10 @@
     <script src="/asset/js/util.js"></script>
   </head>
   <body>
-
   <header class="mui-bar mui-bar-nav">
     <h1 class="mui-title">登录</h1>
   </header>
+
   <div class="mui-content" id="app">
     <form id='login-form' class="mui-input-group">
       <div class="mui-input-row">
@@ -24,13 +24,15 @@
       <div class="mui-input-row">
         <label for="password">密码</label>
         <input id="password" v-model="user.password" placeholder="请输入密码" type="password"
-               class="mui-input-clear mui-input">
+                class="mui-input-clear mui-input">
       </div>
     </form>
     <div class="mui-content-padded">
       <button @click="login" type="button" class="mui-btn mui-btn-block mui-btn-primary">登录</button>
-      <div class="link-area"><a id='reg' href="register.shtml">注册账号</a> <span class="spliter">|</span> <a
-                id='forgetPassword'>忘记密码</a>
+      <div class="link-area">
+        <a id='reg' href="register.shtml">注册账号</a>
+        <span class="spliter">|</span>
+        <a id='forgetPassword'>忘记密码</a>
       </div>
     </div>
     <div class="mui-content-padded oauth-area">
@@ -39,7 +41,8 @@
   </body>
   </html>
   <script type="module">
-    import {userId, userInfo} from '/asset/js/store.js'
+    import { userId, userInfo } from '/asset/js/store.js'
+
     const app = new Vue({
       el: '#app',
       data: {
@@ -50,12 +53,6 @@
       },
       methods: {
         login() {
-          //检测手机号是否正确
-          console.log('login')
-          //检测密码是否为空
-
-          //网络请求
-          //封装了promise
           util.post('user/login', this.user, {
             headers: {
               'Content-Type': 'x-www-form-urlencoded'
@@ -65,9 +62,10 @@
             if (res.code !== 200) {
               mui.toast(res.msg)
             } else {
-              userInfo(res.data)
-              userId(res.data.ID)
-              // location.href = `/chat/index.shtml?id=${res.data.id}&token=${res.data.token}`
+              const { data } = res
+              userInfo(data)
+              userId(data.ID)
+              location.href = `/chat/index.shtml?id=${data.ID}&token=${data.token}`
             }
           })
         }
