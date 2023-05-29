@@ -7,7 +7,7 @@
       <li class="mui-table-view-cell mui-media">
         <a href="update.shtml" class="mui-navigate-right">
           <img class="mui-media-object mui-pull-left head-img" id="head-img"
-               :src="profile.avatar||'/asset/images/avatar0.png'">
+               :src="profile.avatar||'/asset/images/avatar0.png'" alt="">
           <div class="mui-media-body">
             <span v-text="profile.nickname">betatech</span>
             <p class='mui-ellipsis' v-text="profile.memo">专业可靠的IM解决方案专家</p>
@@ -22,12 +22,12 @@
         </a>
       </li>
 
-      <li @click="addfriend" class="mui-table-view-cell">
+      <li @click="addFriend" class="mui-table-view-cell">
         <a class="mui-navigate-right">
           添加好友
         </a>
       </li>
-      <li @click="joincomunity" class="mui-table-view-cell">
+      <li @click="joinCommunity" class="mui-table-view-cell">
         <a class="mui-navigate-right">
           加入社群
         </a>
@@ -39,7 +39,7 @@
       </li>
     </ul>
     <ul class="mui-table-view" style="margin-top: 25px;">
-      <li @tap="showweixin" class="mui-table-view-cell">
+      <li @tap="showVX" class="mui-table-view-cell">
         <a class="mui-navigate-right">
           获取最新代码
         </a>

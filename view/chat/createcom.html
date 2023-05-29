@@ -4,36 +4,36 @@
   <head>
       {{template "/chat/head.shtml"}}
     <style>
-        .area {
-            margin: 20px auto 0px auto;
-        }
+      .area {
+        margin: 20px auto 0px auto;
+      }
 
-        .mui-input-group:first-child {
-            margin-top: 20px;
-        }
+      .mui-input-group:first-child {
+        margin-top: 20px;
+      }
 
-        .mui-input-group label {
-            width: 22%;
-        }
+      .mui-input-group label {
+        width: 22%;
+      }
 
-        .mui-input-row label ~ input,
-        .mui-input-row label ~ select,
-        .mui-input-row label ~ textarea {
-            width: 78%;
-        }
+      .mui-input-row label ~ input,
+      .mui-input-row label ~ select,
+      .mui-input-row label ~ textarea {
+        width: 78%;
+      }
 
-        .mui-checkbox input[type=checkbox],
-        .mui-radio input[type=radio] {
-            top: 6px;
-        }
+      .mui-checkbox input[type=checkbox],
+      .mui-radio input[type=radio] {
+        top: 6px;
+      }
 
-        .mui-content-padded {
-            margin-top: 25px;
-        }
+      .mui-content-padded {
+        margin-top: 25px;
+      }
 
-        .mui-btn {
-            padding: 10px;
-        }
+      .mui-btn {
+        padding: 10px;
+      }
 
     </style>
   </head>
@@ -47,11 +47,11 @@
       <li class="mui-table-view-cell mui-media">
         <a class="mui-navigate-right">
           <input style="width: 100%;height: 48px;position: absolute;opacity:0;" onchange="uploadthis(this)"
-                 accept="image/png,image/jpeg" type="file" class="mui-input-clear mui-input"
-                 placeholder="请输入群名称">
+                  accept="image/png,image/jpeg" type="file" class="mui-input-clear mui-input"
+                  placeholder="请输入群名称">
 
           <img id="head-img" :src="com.icon" style="border-radius:50%;"
-               class="mui-media-object mui-pull-right head-img">
+                  class="mui-media-object mui-pull-right head-img">
           <div class="mui-media-body">
             头像
             <p class="mui-ellipsis">点击右侧上传头像</p></div>
@@ -75,7 +75,7 @@
       <div class="mui-input-row">
         <label>名称</label>
         <input v-model="com.name" id='mobile' type="text" class="mui-input-clear mui-input"
-               placeholder="请输入群名称">
+                placeholder="请输入群名称">
       </div>
       <div class="mui-input-row">
         <label>介绍</label>

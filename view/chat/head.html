@@ -48,7 +48,7 @@
   <script>
     function post(uri, data, fn) {
       const xhr = new XMLHttpRequest()
-      xhr.open('GET', `${location.host}/${uri}`, true)
+      xhr.open('GET', `/${uri}`, true)
       // 添加http头，发送信息至服务器时内容编码类型
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
       xhr.onreadystatechange = function () {
@@ -68,7 +68,7 @@
 
     function uploadFile(uri, dom, fn) {
       const xhr = new XMLHttpRequest()
-      xhr.open('POST', `${location.host}/${uri}`, true)
+      xhr.open('POST', `/${uri}`, true)
       // 添加http头，发送信息至服务器时内容编码类型
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
@@ -86,7 +86,7 @@
 
     function uploadBlob(uri, blob, filetype, fn) {
       const xhr = new XMLHttpRequest()
-      xhr.open('POST', `${location.host}/${uri}`, true)
+      xhr.open('POST', `/${uri}`, true)
       // 添加http头，发送信息至服务器时内容编码类型
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
