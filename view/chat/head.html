@@ -52,7 +52,7 @@
       // 添加http头，发送信息至服务器时内容编码类型
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
       xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
           fn.call(this, JSON.parse(xhr.responseText))
         }
       }
@@ -66,12 +66,12 @@
       xhr.send(_data.join('&'))
     }
 
-    function uploadfile(uri, dom, fn) {
+    function uploadFile(uri, dom, fn) {
       const xhr = new XMLHttpRequest()
       xhr.open('POST', '//' + location.host + '/' + uri, true)
       // 添加http头，发送信息至服务器时内容编码类型
       xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
           fn.call(this, JSON.parse(xhr.responseText))
         }
       }
@@ -84,226 +84,226 @@
       xhr.send(formdata)
     }
 
-    function uploadblob(uri, blob, filetype, fn) {
+    function uploadBlob(uri, blob, filetype, fn) {
       const xhr = new XMLHttpRequest()
       xhr.open('POST', '//' + location.host + '/' + uri, true)
       // 添加http头，发送信息至服务器时内容编码类型
       xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
           fn.call(this, JSON.parse(xhr.responseText))
         }
       }
       const _data = []
-      const formdata = new FormData()
-      formdata.append('filetype', filetype)
+      const formData = new FormData()
+      formData.append('filetype', filetype)
       if (!!userId()) {
-        formdata.append('userid', userId())
+        formData.append('userid', userId())
       }
-      formdata.append('file', blob)
-      xhr.send(formdata)
+      formData.append('file', blob)
+      xhr.send(formData)
     }
 
-    function uploadaudio(uri, blob, fn) {
-      uploadblob(uri, blob, '.mp3', fn)
+    function uploadAudio(uri, blob, fn) {
+      uploadBlob(uri, blob, '.mp3', fn)
     }
 
-    function uploadvideo(uri, blob, fn) {
-      uploadblob(uri, blob, '.mp4', fn)
+    function uploadVideo(uri, blob, fn) {
+      uploadBlob(uri, blob, '.mp4', fn)
     }
   </script>
 
   <style>
-      .flex-container {
-          display: flex;
-          flex-direction: row;
-          width: 100%;
-          padding-top: 10px;
-          position: fixed;
-          bottom: 0px;
-          background-color: #FFFFFF;
-      }
+    .flex-container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      padding-top: 10px;
+      position: fixed;
+      bottom: 0px;
+      background-color: #FFFFFF;
+    }
 
-      .item-1 {
-          height: 50px;
-          height: 50px;
-          padding: 5px 5px 5px 5px;
-      }
+    .item-1 {
+      height: 50px;
+      height: 50px;
+      padding: 5px 5px 5px 5px;
+    }
 
-      .item-2 {
-          margin-right: auto;
-          height: 50px;
-          width: 100%;
-      }
+    .item-2 {
+      margin-right: auto;
+      height: 50px;
+      width: 100%;
+    }
 
-      .txt {
-          margin-right: auto;
-      }
+    .txt {
+      margin-right: auto;
+    }
 
-      .item-3 {
-          height: 50px;
-          height: 50px;
-          padding: 5px 5px 5px 5px;
-      }
+    .item-3 {
+      height: 50px;
+      height: 50px;
+      padding: 5px 5px 5px 5px;
+    }
 
-      .item-4 {
-          height: 50px;
-          height: 50px;
-          padding: 5px 5px 5px 5px;
-      }
+    .item-4 {
+      height: 50px;
+      height: 50px;
+      padding: 5px 5px 5px 5px;
+    }
 
-      li.chat {
-          justify-content: flex-start;
-          align-items: flex-start;
-          display: flex;
+    li.chat {
+      justify-content: flex-start;
+      align-items: flex-start;
+      display: flex;
 
-      }
+    }
 
-      .chat.other {
-          flex-direction: row;
-      }
+    .chat.other {
+      flex-direction: row;
+    }
 
-      .chat.mine {
-          flex-direction: row-reverse;
-      }
+    .chat.mine {
+      flex-direction: row-reverse;
+    }
 
-      img.avatar {
-          width: 64px;
-          height: 64px;
-      }
+    img.avatar {
+      width: 64px;
+      height: 64px;
+    }
 
-      .other .avatar {
-          margin-left: 10px;
-      }
+    .other .avatar {
+      margin-left: 10px;
+    }
 
-      .mine .avatar {
-          margin-right: 10px;
-      }
+    .mine .avatar {
+      margin-right: 10px;
+    }
 
-      .other span {
-          border: 10px solid;
-          border-color: transparent #FFFFFF transparent transparent;
-          margin-top: 10px;
-      }
+    .other span {
+      border: 10px solid;
+      border-color: transparent #FFFFFF transparent transparent;
+      margin-top: 10px;
+    }
 
-      .mine span {
-          border: 10px solid;
-          border-color: transparent transparent transparent #32CD32;
-          margin-top: 10px;
-      }
+    .mine span {
+      border: 10px solid;
+      border-color: transparent transparent transparent #32CD32;
+      margin-top: 10px;
+    }
 
-      .other > .content {
-          background-color: #FFFFFF;
+    .other > .content {
+      background-color: #FFFFFF;
 
-      }
+    }
 
-      .mine > .content {
-          background-color: #32CD32;
+    .mine > .content {
+      background-color: #32CD32;
 
-      }
+    }
 
-      div.content {
-          min-width: 60px;
-          clear: both;
-          display: inline-block;
-          padding: 16px 16px 16px 10px;
-          margin: 0 0 20px 0;
-          font: 16px/20px 'Noto Sans', sans-serif;
-          border-radius: 10px;
+    div.content {
+      min-width: 60px;
+      clear: both;
+      display: inline-block;
+      padding: 16px 16px 16px 10px;
+      margin: 0 0 20px 0;
+      font: 16px/20px 'Noto Sans', sans-serif;
+      border-radius: 10px;
 
-          min-height: 64px;
-      }
+      min-height: 64px;
+    }
 
-      .content > img.pic {
-          width: 100%;
-          margin: 3px 3px 3px 3px;
-      }
+    .content > img.pic {
+      width: 100%;
+      margin: 3px 3px 3px 3px;
+    }
 
-      .content > img.audio {
-          width: 32px;
-          color: white;
-      }
+    .content > img.audio {
+      width: 32px;
+      color: white;
+    }
 
-      #panels {
-          background-color: #FFFFFF;
-          display: flex;
-          position: fixed;
-          bottom: 50px;
-      }
+    #panels {
+      background-color: #FFFFFF;
+      display: flex;
+      position: fixed;
+      bottom: 50px;
+    }
 
-      .doutures {
-          flex-direction: row;
-          flex-wrap: wrap;
-          display: flex;
-      }
+    .doutures {
+      flex-direction: row;
+      flex-wrap: wrap;
+      display: flex;
+    }
 
-      .doutures img {
-          margin: 10px 10px 10px 10px;
-      }
+    .doutures img {
+      margin: 10px 10px 10px 10px;
+    }
 
-      .doutupkg {
-          flex-direction: row;
-          flex-wrap: wrap;
-          display: flex;
-      }
+    .doutupkg {
+      flex-direction: row;
+      flex-wrap: wrap;
+      display: flex;
+    }
 
-      .plugins {
-          flex-direction: row;
-          flex-wrap: wrap;
-          display: flex;
-      }
+    .plugins {
+      flex-direction: row;
+      flex-wrap: wrap;
+      display: flex;
+    }
 
-      .plugin {
-          padding: 10px 10px 10px 20px;
-          margin-left: 10px;
-          margin-right: 10px;
-      }
+    .plugin {
+      padding: 10px 10px 10px 20px;
+      margin-left: 10px;
+      margin-right: 10px;
+    }
 
-      .plugin img {
-          width: 40px;
-      }
+    .plugin img {
+      width: 40px;
+    }
 
-      .plugin p {
-          text-align: center;
-          font-size: 16px;
-      }
+    .plugin p {
+      text-align: center;
+      font-size: 16px;
+    }
 
-      .doutupkg img {
-          width: 32px;
-          height: 32px;
-          margin: 5px 5px 5px 5px;
-      }
+    .doutupkg img {
+      width: 32px;
+      height: 32px;
+      margin: 5px 5px 5px 5px;
+    }
 
-      .upload {
-          width: 64px;
-          height: 64px;
-          position: absolute;
-          top: 1px;
-          opacity: 0;
-      }
+    .upload {
+      width: 64px;
+      height: 64px;
+      position: absolute;
+      top: 1px;
+      opacity: 0;
+    }
 
-      .tagicon {
-          width: 32px;
-          height: 32px;
-      }
+    .tagicon {
+      width: 32px;
+      height: 32px;
+    }
 
-      .small {
-          width: 32px;
-          height: 32px;
-      }
+    .small {
+      width: 32px;
+      height: 32px;
+    }
 
-      .middle {
-          width: 64px;
-          height: 64px;
-      }
+    .middle {
+      width: 64px;
+      height: 64px;
+    }
 
-      .large {
-          width: 96px;
-          height: 96px;
-      }
+    .large {
+      width: 96px;
+      height: 96px;
+    }
 
-      .res image {
-          width: 32px;
-          height: 32px;
-      }
+    .res image {
+      width: 32px;
+      height: 32px;
+    }
   </style>
 {{end}}

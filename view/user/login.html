@@ -64,10 +64,9 @@
             if (res.code !== 200) {
               mui.toast(res.msg)
             } else {
-              const url = `/chat/index.shtml?id=${res.data.id}&token=${res.data.token}`
-              userInfo(res.data)
-              userId(res.data.ID)
-              location.href = url
+              // userInfo(res.data)
+              // userId(res.data.ID)
+              location.href = `/chat/index.shtml?id=${res.data.id}&token=${res.data.token}`
               //mui.alert(url)
             }
           })
