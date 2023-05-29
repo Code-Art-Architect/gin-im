@@ -15,22 +15,20 @@
   <header class="mui-bar mui-bar-nav">
     <h1 class="mui-title">注册</h1>
   </header>
-  <div class="mui-content" id="pageapp">
+  <div class="mui-content" id="app">
     <form id='login-form' class="mui-input-group">
       <div class="mui-input-row">
-        <label>账号</label>
-        <input v-model="user.username" placeholder="请输入手机号" type="text" class="mui-input-clear mui-input">
+        <label for="username">账号</label>
+        <input id="username" v-model="user.username" placeholder="请输入手机号" type="text" class="mui-input-clear mui-input">
       </div>
       <div class="mui-input-row">
-        <label>密码</label>
-        <input v-model="user.password" placeholder="请输入密码" type="password" class="mui-input-clear mui-input">
+        <label for="password">密码</label>
+        <input id="password" v-model="user.password" placeholder="请输入密码" type="password"
+               class="mui-input-clear mui-input">
       </div>
     </form>
     <div class="mui-content-padded">
-      <button @click="login" type="button" class="mui-btn mui-btn-block mui-btn-primary">登录</button>
-      <div class="link-area"><a id='reg' href="register.shtml">注册账号</a> <span class="spliter">|</span> <a
-                id='forgetPassword'>忘记密码</a>
-      </div>
+      <button @click="login" type="button" class="mui-btn mui-btn-block mui-btn-primary">注册</button>
     </div>
     <div class="mui-content-padded oauth-area">
     </div>
@@ -38,14 +36,12 @@
   </body>
   </html>
   <script>
-    var app = new Vue({
-      el: '#pageapp',
-      data: function () {
-        return {
-          user: {
-            mobile: '',
-            passwd: ''
-          }
+    const app = new Vue({
+      el: '#app',
+      data: {
+        user: {
+          mobile: '',
+          passwd: ''
         }
       },
       methods: {
@@ -58,7 +54,7 @@
           //封装了promis
           util.post('user/register', this.user).then(res => {
             console.log(res)
-            if (res.code != 0) {
+            if (res.code !== 200) {
               mui.toast(res.msg)
             } else {
               //location.replace("//127.0.0.1/demo/index.shtml")

@@ -57,11 +57,6 @@ func Login(c *gin.Context) {
 	pwd := util.MakePassword(password, user.Salt)
 	data := model.FindUserByNameAndPwd(username, pwd)
 
-	// c.JSON(200, gin.H{
-	// 	"code": http.StatusOK,
-	// 	"msg":  "登录成功！",
-	// 	"data": data,
-	// })
 	c.JSON(http.StatusOK, util.R{
 		Code: http.StatusOK,
 		Msg:  "登录成功",

@@ -23,7 +23,8 @@
       </div>
       <div class="mui-input-row">
         <label for="password">密码</label>
-        <input id="password" v-model="user.password" placeholder="请输入密码" type="password" class="mui-input-clear mui-input">
+        <input id="password" v-model="user.password" placeholder="请输入密码" type="password"
+               class="mui-input-clear mui-input">
       </div>
     </form>
     <div class="mui-content-padded">
@@ -40,16 +41,14 @@
   <script>
     const app = new Vue({
       el: '#app',
-      data: function () {
-        return {
-          user: {
-            username: '洛必达',
-            password: '123456'
-          }
+      data: {
+        user: {
+          username: '洛必达',
+          password: '123456'
         }
       },
       methods: {
-        login: function () {
+        login() {
           //检测手机号是否正确
           console.log('login')
           //检测密码是否为空
