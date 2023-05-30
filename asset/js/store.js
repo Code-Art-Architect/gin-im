@@ -26,11 +26,3 @@ function userInfo(o) {
     sessionStorage.setItem(userInfoName, JSON.stringify(o))
   }
 }
-
-const url = location.href
-const isOpen = url.indexOf('/login') > -1 || url.indexOf('/register') > -1
-if (!userId() && !isOpen) {
-  // location.href = "login.shtml";
-}
-
-export { userId, userInfo }

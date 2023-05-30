@@ -66,8 +66,8 @@
         </div>
       </div>
 
-      <div v-if="panelStat=='more'" class="plugins">
-        <div class="plugin" @tap="dispatchplugin(item)" v-for="item in plugins">
+      <div v-if="panelStat === 'more'" class="plugins">
+        <div class="plugin" @tap="dispatchPlugin(item)" v-for="item in plugins">
           <img :src="item.icon" alt=""/>
           <div v-html="item.slot"></div>
           <p v-text="item.name"></p>

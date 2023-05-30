@@ -214,5 +214,3 @@ Core.prototype.test = function (regStr, data) {
 }
 
 const core = new Core()
-
-export { core }

@@ -21,10 +21,9 @@
   </div>
   </body>
   </html>
-  <script type="module">
-    import { core } from '/asset/js/util.js'
-    import { userId, userInfo } from '/asset/js/store.js'
-
+  <script src="/asset/js/util.js"></script>
+  <script src="/asset/js/store.js"></script>
+  <script>
     const app = new Vue({
       el: '#app',
       data: {
@@ -60,7 +59,7 @@
             icon: 'asset/images/upload.png',
             name: '照片',
             id: 'upload',
-            slot: '<input accept="image/gif,image/jpeg,,image/png" type="file" onchange="upload(this)" class=\'upload\' />'
+            slot: '<input accept="image/gif,image/jpeg,image/png" type="file" onchange="upload(this)" class=\'upload\' />'
           },
           {
             icon: 'asset/images/camera.png',
@@ -244,7 +243,7 @@
           this.webSocket.send(JSON.stringify(msg))
         },
         sendPicMsg(picurl) {
-          //{id:1,userid:2,dstid:3,cmd:10,media:4,url:"http://www.baidu.com/a/log,jpg"}
+          console.log(picurl)
           const msg = this.createMsgContext()
           msg.media = 4
           msg.url = picurl
@@ -416,14 +415,6 @@
       }
     })
 
-    function upload(dom) {
-      uploadFile('attach/upload', dom, function (res) {
-        if (res.code === 0) {
-          app.sendPicMsg(res.data)
-        }
-      })
-    }
-
     function post(uri, data, fn) {
       const xhr = new XMLHttpRequest()
       xhr.open('GET', `/${uri}`, true)
@@ -444,49 +435,21 @@
       xhr.send(_data.join('&'))
     }
 
-    function uploadFile(uri, dom, fn) {
-      const xhr = new XMLHttpRequest()
-      xhr.open('POST', `/${uri}`, true)
-      // 添加http头，发送信息至服务器时内容编码类型
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
-          fn.call(this, JSON.parse(xhr.responseText))
-        }
-      }
-      const _data = []
+    function upload(e) {
       const formData = new FormData()
-      if (!!userId()) {
-        formData.append('userid', userId())
-      }
-      formData.append('file', dom.files[0])
-      xhr.send(formData)
-    }
-
-    function uploadBlob(uri, blob, filetype, fn) {
-      const xhr = new XMLHttpRequest()
-      xhr.open('POST', `/${uri}`, true)
-      // 添加http头，发送信息至服务器时内容编码类型
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
-          fn.call(this, JSON.parse(xhr.responseText))
+      formData.append('file', e.files[0])
+      axios.post('/attach/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-      }
-      const _data = []
-      const formData = new FormData()
-      formData.append('filetype', filetype)
-      if (!!userId()) {
-        formData.append('userid', userId())
-      }
-      formData.append('file', blob)
-      xhr.send(formData)
-    }
-
-    function uploadAudio(uri, blob, fn) {
-      uploadBlob(uri, blob, '.mp3', fn)
-    }
-
-    function uploadVideo(uri, blob, fn) {
-      uploadBlob(uri, blob, '.mp4', fn)
+      }).then(({ data }) => {
+        if (data.code === 200) {
+          console.log('上传成功')
+          app.sendPicMsg(data.data)
+        }
+      }).catch(error => {
+        console.log(error)
+      })
     }
   </script>
 {{end}}

@@ -33,8 +33,8 @@ func Fail(w http.ResponseWriter, msg string) {
 	Response(w, 500, msg, nil)
 }
 
-func OK(w http.ResponseWriter, msg string) {
-	Response(w, 200, msg, nil)
+func OK(w http.ResponseWriter, msg string, data any) {
+	Response(w, 200, msg, data)
 }
 
 func OKList(w http.ResponseWriter, data any, total any) {

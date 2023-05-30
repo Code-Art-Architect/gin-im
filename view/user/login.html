@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/asset/css/login.css"/>
     <script src="/asset/plugins/mui/js/mui.js"></script>
     <script src="/asset/js/vue.min.js"></script>
+    <script src="/asset/js/util.js"></script>
+    <script src="/asset/js/store.js"></script>
   </head>
   <body>
   <header class="mui-bar mui-bar-nav">
@@ -40,10 +42,7 @@
   </div>
   </body>
   </html>
-  <script type="module">
-    import { userId, userInfo } from '/asset/js/store.js'
-    import { core } from '/asset/js/util.js'
-
+  <script>
     const app = new Vue({
       el: '#app',
       data: {
