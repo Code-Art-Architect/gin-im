@@ -59,6 +59,12 @@ func UpdateUser(user UserBasic) *gorm.DB {
 		})
 }
 
+func FindUserById(id int) UserBasic {
+	var user UserBasic
+	util.DB.Where("id = ?", id).First(&user)
+	return user
+}
+
 func FindUserByName(name string) UserBasic {
 	user := UserBasic{}
 	util.DB.Where("name = ?", name).First(&user)

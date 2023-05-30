@@ -204,3 +204,15 @@ func SearchFriend(c *gin.Context) {
 		Rows: friends,
 	})
 }
+
+func FindUser(c *gin.Context) {
+	userId, err := strconv.Atoi(c.Query("userId"))
+	if err != nil {
+		fmt.Println(err)
+	}
+	user := model.FindUserById(userId)
+	c.JSON(http.StatusOK, util.R{
+		Code: http.StatusOK,
+		Data: user,
+	})
+}

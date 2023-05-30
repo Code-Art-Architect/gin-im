@@ -8,9 +8,8 @@
       <ul class="chat-thread">
         <li class="chat" :class="item.isMine? 'mine' : 'other'"
             v-for="item in msgList"
-            v-if="item.msg.type === msgContext.type && 
-            (( item.msg.type === 1 &&  (item.isMine ? item.msg.dstId === msgContext.dstId : item.msg.dstId === msgContext.userId)) ||
-            ( item.msg.type === 2 &&  (item.msg.dstId === msgContext.dstId))) ">
+            v-if="item.msg.type === msgContext.type &&
+            (item.msg.type === 1 &&  (item.isMine ? item.msg.userId === msgContext.userId : item.msg.targetId === msgContext.userId)) ">
           <div>
             <img class="avatar" :src="item.user.avatar || '/asset/images/avatar0.png'" alt=""/>
           </div>

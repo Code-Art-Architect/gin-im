@@ -60,7 +60,6 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 
 	isValid := true // checkToken()
 	conn, err := (&websocket.Upgrader{
-		// token校验
 		CheckOrigin: func(request *http.Request) bool {
 			return isValid
 		},
@@ -97,7 +96,7 @@ func sendProc(node *Node) {
 	for {
 		select {
 		case data := <-node.DataQueue:
-			fmt.Println("[ws]sendProc >>>> msg :", string(data))
+			fmt.Println("[ws]sendProc >>>> msg:", string(data))
 			err := node.Conn.WriteMessage(websocket.TextMessage, data)
 			if err != nil {
 				fmt.Println(err)
@@ -115,7 +114,7 @@ func receiveProc(node *Node) {
 			return
 		}
 		broadMsg(data)
-		fmt.Println("[ws] <<<<<", data)
+		fmt.Println("[ws] receiveProc <<<<<", string(data))
 	}
 }
 
@@ -139,7 +138,7 @@ func udpSendProc() {
 	for {
 		select {
 		case data := <-udpSendChan:
-			fmt.Println("udpSendProc  data :", string(data))
+			fmt.Println("udpSendProc data: ", string(data))
 			_, err := con.Write(data)
 			if err != nil {
 				fmt.Println(err)
@@ -167,7 +166,7 @@ func udpReceiveProc() {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println("udpReceiveProc  data :", string(buf[0:n]))
+		fmt.Println("udpReceiveProc data: ", string(buf[0:n]))
 		dispatch(buf[0:n])
 	}
 }
@@ -200,6 +199,7 @@ func sendGroupMsg() {
 }
 
 func sendMsg(userId int64, msg []byte) {
+	fmt.Printf("send message >>> userId: %d, msg: %s\n", userId, string(msg))
 	rwLocker.RLock()
 	node, ok := clientMap[userId]
 	rwLocker.RUnlock()

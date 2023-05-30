@@ -226,7 +226,6 @@
           data.isMine = userId() === msg.userId
           data.user = user
           data.msg = msg
-          console.log(data)
           this.msgList = this.msgList.concat(data)
           this.reset()
           const that = this
@@ -278,45 +277,46 @@
         },
         loadUserInfo(userId, cb) {
           userId = '' + userId
-          const userinfo = this.userMap[userId]
-          if (!userinfo) {
-            post('user/find', { id: parseInt(userId) }, (res) => {
-              cb(res.data)
-              this.userMap[userId] = res.data
+          const u = this.userMap[userId]
+          if (!u) {
+            console.log("ccccc")
+            axios.get('/user/find', {
+              params: {
+                userId: userId
+              }
+            }).then(({ data }) => {
+              cb(data)
+              this.userMap[userId] = data
             })
           } else {
-            cb(userinfo)
+            cb(u)
           }
         },
         onMessage(data) {
+          console.log(data)
           this.loadUserInfo(data.userId, user => {
             this.showMsg(user, data)
           })
         },
         initWebSocket() {
-          const url = 'ws://' + `${location.host}/user/sendUMsg?id=${userId()}&token=${core.parseQuery('token')}`
+          const url = 'ws://' + `${location.host}/user/sendUMsg?userId=${userId()}&token=${core.parseQuery('token')}`
           this.webSocket = new WebSocket(url)
-          
+
           this.webSocket.onmessage = (evt) => {
-            //{"data":"}",...}
-            console.log(evt)
             if (evt.data.indexOf('}') > -1) {
               this.onMessage(JSON.parse(evt.data))
             } else {
               console.log('recv<==' + evt.data)
             }
           }
-          
+
           this.webSocket.onclose = function (evt) {
             console.log(evt.data)
           }
-          
+
           this.webSocket.onerror = function (evt) {
             console.log(evt.data)
           }
-          /*{
-              this.webSocket.send()
-          }*/
         },
         sendMsg() {
 
