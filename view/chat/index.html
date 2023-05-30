@@ -52,8 +52,7 @@
         },
         msgList: [],
         msgContext: {
-          dstId: 10,
-          cmd: 1,
+          type: 1,
           userId: userId()
         },
         plugins: [
@@ -189,9 +188,9 @@
           }
         },
         reset() {
-          this.panelstat = 'kbord'
-          this.txtstat = 'kbord'
-          this.txtmsg = ''
+          this.panelStat = 'kbord'
+          this.txtStat = 'kbord'
+          this.txtMsg = ''
         },
         createMsgContext() {
           return JSON.parse(JSON.stringify(this.msgContext))
@@ -262,7 +261,6 @@
           msg.url = url
           msg.amount = num
           this.showMsg(userInfo(), msg)
-          //console.log("sendaudiomsg",this.msglist);
           this.webSocket.send(JSON.stringify(msg))
         },
         singleMsg(user) {
@@ -270,13 +268,13 @@
           this.win = 'single'
           this.title = '和' + user.name + '聊天中'
           this.msgContext.targetId = parseInt(user.ID)
-          this.msgContext.cmd = 1
+          this.msgContext.type = 1
         },
         groupMsg(group) {
           this.win = 'group'
           this.title = group.name
-          this.msgContext.dstid = parseInt(group.id)
-          this.msgContext.cmd = 2
+          this.msgContext.targetId = parseInt(group.ID)
+          this.msgContext.type = 2
         },
         loadUserInfo(userId, cb) {
           userId = '' + userId
@@ -298,7 +296,7 @@
         initWebSocket() {
           const url = 'ws://' + `${location.host}/user/sendUMsg?id=${userId()}&token=${core.parseQuery('token')}`
           this.webSocket = new WebSocket(url)
-          // 消息处理
+          
           this.webSocket.onmessage = (evt) => {
             //{"data":"}",...}
             console.log(evt)
@@ -308,11 +306,11 @@
               console.log('recv<==' + evt.data)
             }
           }
-          //关闭回调
+          
           this.webSocket.onclose = function (evt) {
             console.log(evt.data)
           }
-          //出错回调
+          
           this.webSocket.onerror = function (evt) {
             console.log(evt.data)
           }

@@ -6,19 +6,19 @@
     </header>
     <div id="convo" data-from="Sonu Joshi">
       <ul class="chat-thread">
-        <li class="chat" :class="item.isMine? 'mine': 'other'"
+        <li class="chat" :class="item.isMine? 'mine' : 'other'"
             v-for="item in msgList"
-            v-if="item.msg.cmd === msgContext.cmd && 
-            (( item.msg.cmd === 1 &&  (item.isMine ? item.msg.dstId === msgContext.dstId : item.msg.dstId === msgContext.userId)) ||
-            ( item.msg.cmd === 2 &&  (item.msg.dstId === msgContext.dstId))) ">
+            v-if="item.msg.type === msgContext.type && 
+            (( item.msg.type === 1 &&  (item.isMine ? item.msg.dstId === msgContext.dstId : item.msg.dstId === msgContext.userId)) ||
+            ( item.msg.type === 2 &&  (item.msg.dstId === msgContext.dstId))) ">
           <div>
             <img class="avatar" :src="item.user.avatar || '/asset/images/avatar0.png'" alt=""/>
           </div>
           <span></span>
           <div class="content">
-            <div v-if="item.msg.media==1" v-text="item.msg.content"></div>
+            <div v-if="item.msg.media === 1" v-text="item.msg.content"></div>
             <img class="pic" v-if="item.msg.media == 4" :src="item.msg.url" alt=""/>
-            <div v-if="item.msg.media==3" @tap="playAudio(item.msg.url)">
+            <div v-if="item.msg.media === 3" @tap="playAudio(item.msg.url)">
               <img class="audio" src="/asset/images/audiom.png" alt=""/>
               <span v-text="item.msg.amount"></span>
             </div>
