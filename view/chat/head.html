@@ -1,38 +1,4 @@
 {{define "/chat/head.shtml"}}
-  <script>
-    function userId(id) {
-      if (typeof id == 'undefined') {
-        const r = sessionStorage.getItem('userid')
-        if (!r) {
-          return 0
-        } else {
-          return parseInt(r)
-        }
-      } else {
-        sessionStorage.setItem('userid', id)
-      }
-    }
-
-    function userInfo(o) {
-      if (typeof o == 'undefined') {
-        const r = sessionStorage.getItem('userinfo')
-        if (!!r) {
-          return JSON.parse(r)
-        } else {
-          return null
-        }
-      } else {
-        sessionStorage.setItem('userinfo', JSON.stringify(o))
-      }
-    }
-
-    const url = location.href
-    const isOpen = url.indexOf('/login') > -1 || url.indexOf('/register') > -1
-    if (!userId() && !isOpen) {
-      // location.href = "login.shtml";
-    }
-  </script>
-
   <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -45,73 +11,6 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="/asset/plugins/mui/js/mui.js"></script>
   <script src="/asset/js/vue.min.js"></script>
-  <script>
-    function post(uri, data, fn) {
-      const xhr = new XMLHttpRequest()
-      xhr.open('GET', `/${uri}`, true)
-      // 添加http头，发送信息至服务器时内容编码类型
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
-          fn.call(this, JSON.parse(xhr.responseText))
-        }
-      }
-      const _data = []
-      if (!!userId()) {
-        // data["userid"] = userId();
-      }
-      for (const i in data) {
-        _data.push(i + '=' + encodeURI(data[i]))
-      }
-      xhr.send(_data.join('&'))
-    }
-
-    function uploadFile(uri, dom, fn) {
-      const xhr = new XMLHttpRequest()
-      xhr.open('POST', `/${uri}`, true)
-      // 添加http头，发送信息至服务器时内容编码类型
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
-          fn.call(this, JSON.parse(xhr.responseText))
-        }
-      }
-      const _data = []
-      const formData = new FormData()
-      if (!!userId()) {
-        formData.append('userid', userId())
-      }
-      formData.append('file', dom.files[0])
-      xhr.send(formData)
-    }
-
-    function uploadBlob(uri, blob, filetype, fn) {
-      const xhr = new XMLHttpRequest()
-      xhr.open('POST', `/${uri}`, true)
-      // 添加http头，发送信息至服务器时内容编码类型
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
-          fn.call(this, JSON.parse(xhr.responseText))
-        }
-      }
-      const _data = []
-      const formData = new FormData()
-      formData.append('filetype', filetype)
-      if (!!userId()) {
-        formData.append('userid', userId())
-      }
-      formData.append('file', blob)
-      xhr.send(formData)
-    }
-
-    function uploadAudio(uri, blob, fn) {
-      uploadBlob(uri, blob, '.mp3', fn)
-    }
-
-    function uploadVideo(uri, blob, fn) {
-      uploadBlob(uri, blob, '.mp4', fn)
-    }
-  </script>
-
   <style>
     .flex-container {
       display: flex;

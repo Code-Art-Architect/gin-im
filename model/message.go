@@ -21,15 +21,15 @@ func init() {
 
 type Message struct {
 	gorm.Model
-	FromId   int64  // 发送者
-	TargetId int64  // 接收者
-	Type     int    // 发送类型 群聊 私聊 广播
-	Media    int    // 消息类型 文字 图片 音频
-	Content  string // 消息内容
-	Pic      string
-	Url      string
-	Desc     string
-	Amount   int // 其他数字统计
+	FromId   int64  `json:"fromId,omitempty"`   // 发送者
+	TargetId int64  `json:"targetId,omitempty"` // 接收者
+	Type     int    `json:"type,omitempty"`     // 发送类型 群聊 私聊 广播
+	Media    int    `json:"media,omitempty"`    // 消息类型 文字 图片 音频
+	Content  string `json:"content,omitempty"`  // 消息内容
+	Pic      string `json:"pic,omitempty"`
+	Url      string `json:"url,omitempty"`
+	Desc     string `json:"desc,omitempty"`
+	Amount   int    `json:"amount,omitempty"` // 其他数字统计
 }
 
 func (table *Message) TableName() string {
@@ -129,7 +129,7 @@ func broadMsg(data []byte) {
 func udpSendProc() {
 	con, err := net.DialUDP("udp", nil, &net.UDPAddr{
 		IP:   net.IPv4(127, 0, 0, 1),
-		Port: 6379,
+		Port: 3000,
 	})
 	defer con.Close()
 	if err != nil {

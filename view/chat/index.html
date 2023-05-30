@@ -22,8 +22,8 @@
   </body>
   </html>
   <script type="module">
-    import { core } from '/asset/js/util.js'  
-    import { userId } from '../../asset/js/store.js'
+    import { core } from '/asset/js/util.js'
+    import { userId, userInfo } from '/asset/js/store.js'
 
     const app = new Vue({
       el: '#app',
@@ -53,8 +53,8 @@
         msgList: [],
         msgContext: {
           dstId: 10,
-          cmd: 10,
-          userid: userId()
+          cmd: 1,
+          userId: userId()
         },
         plugins: [
           {
@@ -188,13 +188,13 @@
               mui.toast('系统暂不支持,请自行扩展')
           }
         },
-        reset: function () {
+        reset() {
           this.panelstat = 'kbord'
           this.txtstat = 'kbord'
           this.txtmsg = ''
         },
         createMsgContext() {
-          return JSON.parse(JSON.stringify(this.msgcontext))
+          return JSON.parse(JSON.stringify(this.msgContext))
         },
         loadDouPics: function () {
           const res = []
@@ -223,11 +223,11 @@
           mui.alert('请加微信号jiepool-winlion索取')
         },
         showMsg(user, msg) {
-          const data = {} 
-          data.ismine = userId() === msg.userid
-          //console.log(data.ismine,userId(),msg.userid)
+          const data = {}
+          data.isMine = userId() === msg.userId
           data.user = user
           data.msg = msg
+          console.log(data)
           this.msgList = this.msgList.concat(data)
           this.reset()
           const that = this
@@ -239,7 +239,7 @@
         startRecord() {
 
         },
-        sendTxtMsg: function (txt) {
+        sendTxtMsg(txt) {
           //{id:1,userid:2,dstid:3,cmd:10,media:1,content:"hello"}
           const msg = this.createMsgContext()
           msg.media = 1
@@ -247,7 +247,7 @@
           this.showMsg(userInfo(), msg)
           this.webSocket.send(JSON.stringify(msg))
         },
-        sendPicMsg: function (picurl) {
+        sendPicMsg(picurl) {
           //{id:1,userid:2,dstid:3,cmd:10,media:4,url:"http://www.baidu.com/a/log,jpg"}
           const msg = this.createMsgContext()
           msg.media = 4
@@ -255,7 +255,7 @@
           this.showMsg(userInfo(), msg)
           this.webSocket.send(JSON.stringify(msg))
         },
-        sendAudioMsg: function (url, num) {
+        sendAudioMsg(url, num) {
           //{id:1,userid:2,dstid:3,cmd:10,media:3,url:"http://www.a,com/dsturl.mp3",anount:40}
           const msg = this.createMsgContext()
           msg.media = 3
@@ -269,44 +269,45 @@
           //console.log(user)
           this.win = 'single'
           this.title = '和' + user.name + '聊天中'
-          this.msgContext.dstid = parseInt(user.ID)
+          this.msgContext.targetId = parseInt(user.ID)
           this.msgContext.cmd = 1
         },
-        groupMsg: function (group) {
+        groupMsg(group) {
           this.win = 'group'
           this.title = group.name
           this.msgContext.dstid = parseInt(group.id)
-          this.msgContext.cmd = 11
+          this.msgContext.cmd = 2
         },
-        loadUserInfo(userid, cb) {
-          userid = '' + userid
-          const userinfo = this.userMap[userid]
+        loadUserInfo(userId, cb) {
+          userId = '' + userId
+          const userinfo = this.userMap[userId]
           if (!userinfo) {
-            post('user/find', { id: parseInt(userid) }, function (res) {
+            post('user/find', { id: parseInt(userId) }, (res) => {
               cb(res.data)
-              this.userMap[userid] = res.data
-            }.bind(this))
+              this.userMap[userId] = res.data
+            })
           } else {
             cb(userinfo)
           }
         },
-        onmessage: function (data) {
-          this.loadUserInfo(data.userid, function (user) {
+        onMessage(data) {
+          this.loadUserInfo(data.userId, user => {
             this.showMsg(user, data)
-          }.bind(this))
+          })
         },
-        initWebSocket: function () {
-          const url = 'ws://' + `${location.host}/chat?id=${userId()}&token=${core.parseQuery('token')}`
+        initWebSocket() {
+          const url = 'ws://' + `${location.host}/user/sendUMsg?id=${userId()}&token=${core.parseQuery('token')}`
           this.webSocket = new WebSocket(url)
-          //消息处理
-          this.webSocket.onmessage = function (evt) {
+          // 消息处理
+          this.webSocket.onmessage = (evt) => {
             //{"data":"}",...}
+            console.log(evt)
             if (evt.data.indexOf('}') > -1) {
-              this.onmessage(JSON.parse(evt.data))
+              this.onMessage(JSON.parse(evt.data))
             } else {
               console.log('recv<==' + evt.data)
             }
-          }.bind(this)
+          }
           //关闭回调
           this.webSocket.onclose = function (evt) {
             console.log(evt.data)
@@ -339,9 +340,12 @@
           })
         },
         loadCommunities() {
-          const that = this
-          post('contact/load-communities', { userid: userId() }, function (res) {
-            that.communities = res.rows || []
+          axios.get('contact/load-communities', {
+            params: {
+              userId: userId()
+            }
+          }).then(({ data }) => {
+            this.communities = res.rows || []
           })
         },
         addFriend() {
@@ -423,6 +427,71 @@
           app.sendPicMsg(res.data)
         }
       })
+    }
+
+    function post(uri, data, fn) {
+      const xhr = new XMLHttpRequest()
+      xhr.open('GET', `/${uri}`, true)
+      // 添加http头，发送信息至服务器时内容编码类型
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
+          fn.call(this, JSON.parse(xhr.responseText))
+        }
+      }
+      const _data = []
+      if (!!userId()) {
+        // data["userid"] = userId();
+      }
+      for (const i in data) {
+        _data.push(i + '=' + encodeURI(data[i]))
+      }
+      xhr.send(_data.join('&'))
+    }
+
+    function uploadFile(uri, dom, fn) {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', `/${uri}`, true)
+      // 添加http头，发送信息至服务器时内容编码类型
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
+          fn.call(this, JSON.parse(xhr.responseText))
+        }
+      }
+      const _data = []
+      const formData = new FormData()
+      if (!!userId()) {
+        formData.append('userid', userId())
+      }
+      formData.append('file', dom.files[0])
+      xhr.send(formData)
+    }
+
+    function uploadBlob(uri, blob, filetype, fn) {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', `/${uri}`, true)
+      // 添加http头，发送信息至服务器时内容编码类型
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
+          fn.call(this, JSON.parse(xhr.responseText))
+        }
+      }
+      const _data = []
+      const formData = new FormData()
+      formData.append('filetype', filetype)
+      if (!!userId()) {
+        formData.append('userid', userId())
+      }
+      formData.append('file', blob)
+      xhr.send(formData)
+    }
+
+    function uploadAudio(uri, blob, fn) {
+      uploadBlob(uri, blob, '.mp3', fn)
+    }
+
+    function uploadVideo(uri, blob, fn) {
+      uploadBlob(uri, blob, '.mp4', fn)
     }
   </script>
 {{end}}

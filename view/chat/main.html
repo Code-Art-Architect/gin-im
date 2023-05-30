@@ -6,25 +6,18 @@
     </header>
     <div id="convo" data-from="Sonu Joshi">
       <ul class="chat-thread">
-        <!--群聊且item.dstid=当前msgcontext.dstid
-       <span v-text="JSON.stringify(msglist)"></span>
-         -->
-        <!--单聊且是他发的item.userid=msgcontext.dstid && 发给我的 item.dstid=myid 或者是我item.userid= myid发的,&&发给他的item.dstid= msgcontext.dstid 我发给他的  -->
-
-        <!--dstid>TargetId  11=2  10=1 -->
-        <!-- v-if="(item.ismine? item.msg.TargetId==msgcontext.TargetId : item.msg.userId==msgcontext.TargetId )" -->
-        <li class="chat" :class="item.ismine?'mine':'other'"
+        <li class="chat" :class="item.isMine? 'mine': 'other'"
             v-for="item in msgList"
             v-if="item.msg.cmd === msgContext.cmd && 
-            (( item.msg.cmd==10 &&  (item.ismine? item.msg.dstid === msgContext.dstid : item.msg.dstid === msgContext.userid )) ||
-            ( item.msg.cmd==11 &&  (item.msg.dstid === msgContext.dstid))) ">
+            (( item.msg.cmd === 1 &&  (item.isMine ? item.msg.dstId === msgContext.dstId : item.msg.dstId === msgContext.userId)) ||
+            ( item.msg.cmd === 2 &&  (item.msg.dstId === msgContext.dstId))) ">
           <div>
             <img class="avatar" :src="item.user.avatar || '/asset/images/avatar0.png'" alt=""/>
           </div>
           <span></span>
           <div class="content">
             <div v-if="item.msg.media==1" v-text="item.msg.content"></div>
-            <img class="pic" v-if="item.msg.media==4" :src="item.msg.url" alt=""/>
+            <img class="pic" v-if="item.msg.media == 4" :src="item.msg.url" alt=""/>
             <div v-if="item.msg.media==3" @tap="playAudio(item.msg.url)">
               <img class="audio" src="/asset/images/audiom.png" alt=""/>
               <span v-text="item.msg.amount"></span>
