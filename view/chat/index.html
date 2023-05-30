@@ -203,10 +203,8 @@
           }
           const that = this
           for (const id in res) {
-            //console.log("res[i]",id,res[id])
             post(res[id], {}, function (pkginfo) {
-              //console.log("post res[i]",id,res[id],pkginfo)
-              const baseurl = config.baseurl + '/' + pkginfo.id + '/'
+              const baseurl = config.baseurl + pkginfo.id + '/'
               for (const j in pkginfo.assets) {
                 pkginfo.assets[j] = baseurl + pkginfo.assets[j]
               }
@@ -279,7 +277,7 @@
           userId = '' + userId
           const u = this.userMap[userId]
           if (!u) {
-            console.log("ccccc")
+            console.log('ccccc')
             axios.get('/user/find', {
               params: {
                 userId: userId
@@ -378,7 +376,6 @@
           post('contact/join-community', { dstid: dstobj, 'userid': userId() }, function (res) {
             if (res.code === 0) {
               mui.toast('添加成功')
-
               that.loadCommunities()
             } else {
               mui.toast(res.msg)
@@ -401,7 +398,7 @@
           }, 'div')
           document.querySelector('.mui-popup-input input').type = 'number'
         },
-        quit: function () {
+        quit() {
           sessionStorage.removeItem('userid')
           sessionStorage.removeItem('userinfo')
           location.href = 'login.shtml'
