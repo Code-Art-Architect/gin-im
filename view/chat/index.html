@@ -134,7 +134,7 @@
             'video/webm\;codecs=h264',
             'audio/webm\;codecs=opus',
             'video/mpeg']
-          let supportType = ''
+          let supportType
           for (const i in types) {
             if (MediaRecorder.isTypeSupported(types[i])) {
               supportType = types[i]
@@ -147,7 +147,7 @@
 
           this.duration = new Date().getTime()
           navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-            .then(function (stream) {
+            .then((stream) => {
               this.showprocess = true
               this.recorder = new MediaRecorder(stream)
               audioTarget.srcObject = stream
@@ -164,11 +164,11 @@
                 this.showprocess = false
               }
               this.recorder.start()
-            }.bind(this)).catch(function (err) {
+            }).catch(err => {
             console.log(err)
             mui.toast(err)
             this.showprocess = false
-          }.bind(this))
+          })
         },
         stopRecorder() {
           if (typeof this.recorder.stop == 'function') {
@@ -194,7 +194,7 @@
         createMsgContext() {
           return JSON.parse(JSON.stringify(this.msgContext))
         },
-        loadDouPics: function () {
+        loadDouPics() {
           const res = []
           const config = this.douTu.config
           for (const i in config.pkgids) {
@@ -235,7 +235,6 @@
 
         },
         sendTxtMsg(txt) {
-          //{id:1,userid:2,dstid:3,cmd:10,media:1,content:"hello"}
           const msg = this.createMsgContext()
           msg.media = 1
           msg.content = txt
@@ -251,7 +250,6 @@
           this.webSocket.send(JSON.stringify(msg))
         },
         sendAudioMsg(url, num) {
-          //{id:1,userid:2,dstid:3,cmd:10,media:3,url:"http://www.a,com/dsturl.mp3",anount:40}
           const msg = this.createMsgContext()
           msg.media = 3
           msg.url = url
@@ -450,6 +448,32 @@
       }).catch(error => {
         console.log(error)
       })
+    }
+
+    function uploadBlob(uri, blob, filetype, fn) {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', `/${uri}`, true)
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
+          fn.call(this, JSON.parse(xhr.responseText))
+        }
+      }
+      const _data = []
+      const formData = new FormData()
+      formData.append('fileType', filetype)
+      if (!!userId()) {
+        formData.append('userId', userId())
+      }
+      formData.append('file', blob)
+      xhr.send(formData)
+    }
+
+    function uploadAudio(uri, blob, fn) {
+      uploadBlob(uri, blob, '.mp3', fn)
+    }
+
+    function uploadVideo(uri, blob, fn) {
+      uploadBlob(uri, blob, '.mp4', fn)
     }
   </script>
 {{end}}

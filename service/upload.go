@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +21,20 @@ func Upload(c *gin.Context) {
 		return
 	}
 
-	fileName := fmt.Sprintf("%d%04d%s", time.Now().Unix(), rand.Int31(), ".png")
+	fileType := c.PostForm("fileType")
+
+	suffix := ".png"
+	filename := srcFile.Filename
+	tem := strings.Split(filename, ".")
+	if len(tem) > 1 {
+		suffix = "." + tem[len(tem)-1]
+	}
+
+	if fileType != "" {
+		suffix = fileType
+	}
+
+	fileName := fmt.Sprintf("%d%04d%s", time.Now().Unix(), rand.Int31(), suffix)
 	url := "./asset/upload/" + fileName
 	err = c.SaveUploadedFile(srcFile, url)
 	if err != nil {
