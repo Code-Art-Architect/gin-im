@@ -5,7 +5,7 @@
       {{template "/chat/head.shtml"}}
     <style>
       .area {
-        margin: 20px auto 0px auto;
+        margin: 20px auto 0 auto;
       }
 
       .mui-input-group:first-child {
@@ -34,7 +34,6 @@
       .mui-btn {
         padding: 10px;
       }
-
     </style>
   </head>
   <body>
@@ -55,7 +54,8 @@
           >
           <div class="mui-media-body">
             头像
-            <p class="mui-ellipsis">点击右侧上传头像</p></div>
+            <p class="mui-ellipsis">点击右侧上传头像</p>
+          </div>
         </a>
       </li>
     </ul>
@@ -84,50 +84,48 @@
     </div>
 
     <div class="mui-content-padded">
-      <button @click="createCommunity" id='reg' class="mui-btn mui-btn-block mui-btn-primary">确认</button>
+      <button @click="createCommunity" id="reg" class="mui-btn mui-btn-block mui-btn-primary">确认</button>
     </div>
   </div>
   </body>
   </html>
   <script>
-    const app = new Vue(
-      {
-        el: '#app',
-        data: {
-          com: {
-            name: '',
-            cate: 0,
-            desc: '',
-            icon: '/asset/images/community.png',
-            ownerId: userId()
+    const app = new Vue({
+      el: '#app',
+      data: {
+        com: {
+          name: '',
+          cate: 0,
+          desc: '',
+          icon: '/asset/images/community.png',
+          ownerId: userId()
+        }
+      },
+      created() {
+        
+      },
+      methods: {
+        createCommunity() {
+          if (!this.com.name) {
+            mui.toast('请填写名称')
+            return
           }
-        },
-        created() {
-          this.com.ownerId = userId()
-        },
-        methods: {
-          createCommunity() {
-            if (!this.com.name) {
-              mui.toast('请填写名称')
-              return
+          axios.post('/contact/create-community', this.com).then(({ data }) => {
+            if (data.code === 200) {
+              this.reset()
+              mui.toast('创建成功')
+            } else {
+              mui.toast(data.msg)
             }
-            axios.post('/contact/create-community', this.com).then(({ data }) => {
-              if (data.code === 200) {
-                this.reset()
-                mui.toast('创建成功')
-              } else {
-                mui.toast(data.msg)
-              }
-            }).catch(e => {
-              mui.toast(e.response.data.msg)
-            })
-          },
-          reset() {
-            this.com = {}
-          }
+          }).catch(e => {
+            mui.toast(e.response.data.msg)
+          })
+        },
+        reset() {
+          this.com = {}
         }
       }
-    )
+    })
 
     function uploadThis(dom) {
       const data = new FormData()
