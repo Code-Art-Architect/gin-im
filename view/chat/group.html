@@ -4,12 +4,12 @@
       <h1 class="mui-title">群聊</h1>
     </header>
     <ul class="mui-table-view mui-table-view-chevron">
-      <li v-for="item in communities" class="mui-table-view-cell mui-media" @tap="groupmsg(item)">
+      <li v-for="item in communities" class="mui-table-view-cell mui-media" @tap="groupMsg(item)">
         <a class="mui-navigate-right">
-          <img class="mui-media-object mui-pull-left" :src="item.icon" alt="">
+          <img class="mui-media-object mui-pull-left" :src="item.icon" alt="">  
           <div class="mui-media-body">
-            <span v-text="item.name+'('+item.id+')'"></span>
-            <p class='mui-ellipsis' v-text="item.memo"></p>
+            <span v-text="item.name + '(' + item.ID + ')'"></span>
+            <p class='mui-ellipsis' v-text="item.desc"></p>
           </div>
         </a>
       </li>

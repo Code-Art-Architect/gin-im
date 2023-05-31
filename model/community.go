@@ -30,3 +30,9 @@ func CreateCommunity(c Community) (int, string) {
 	}
 	return 1, "建群成功"
 }
+
+func LoadCommunity(userId uint) []*Community {
+	var data []*Community
+	util.DB.Where("owner_id = ?", userId).Find(&data)
+	return data
+}

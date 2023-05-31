@@ -106,7 +106,7 @@
       created() {
         checkLogin()
         this.loadFriends()
-        // this.loadCommunities()
+        this.loadCommunities()
         this.loadDouPics()
         const user = userInfo()
         if (!!user) {
@@ -332,12 +332,12 @@
           })
         },
         loadCommunities() {
-          axios.get('contact/load-communities', {
+          axios.get('/contact/load-communities', {
             params: {
               userId: userId()
             }
           }).then(({ data }) => {
-            this.communities = data.rows || []
+            this.communities = data.data || []
           })
         },
         addFriend() {

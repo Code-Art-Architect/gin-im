@@ -2,6 +2,7 @@ package service
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/code-art/gin-im/util"
 )
 
+// 创建群聊
 func CreateCommunity(c *gin.Context) {
 	var community model.Community
 	if err := c.ShouldBindJSON(&community); err != nil {
@@ -28,5 +30,15 @@ func CreateCommunity(c *gin.Context) {
 	c.JSON(http.StatusOK, util.R{
 		Code: http.StatusOK,
 		Msg:  s,
+	})
+}
+
+// 加载群列表
+func LoadCommunity(c *gin.Context) {
+	userId, _ := strconv.Atoi(c.Query("userId"))
+	data := model.LoadCommunity(uint(userId))
+	c.JSON(http.StatusOK, util.R{
+		Code: http.StatusOK,
+		Data: data,
 	})
 }
