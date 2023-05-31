@@ -218,12 +218,12 @@ func FindUser(c *gin.Context) {
 }
 
 func AddFriend(c *gin.Context) {
-	userId, err := strconv.Atoi(c.Query("userId"))
+	userId, err := strconv.Atoi(c.PostForm("userId"))
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	targetId, err := strconv.Atoi(c.Query("targetId"))
+	targetId, err := strconv.Atoi(c.PostForm("targetId"))
 	if err != nil {
 		fmt.Println(err)
 	}

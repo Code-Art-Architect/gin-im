@@ -348,11 +348,11 @@
               if (isNaN(e.value) || e.value <= 0) {
                 mui.toast('格式错误')
               } else {
-                //mui.toast(e.value);
-                axios.post('contact/add-friend', { userId: userId(), targetId: e.value }, {
-                  headers: {
-                    'Content-Type': 'x-www-form-urlencoded'
-                  }
+                const data = new FormData()
+                data.append('userId', userId())
+                data.append('targetId', e.value)
+                axios.post('contact/add-friend', data, {
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 }).then(({ data }) => {
                   if (data.code === 200) {
                     mui.toast('添加成功')
@@ -380,7 +380,7 @@
             }
           })
         },
-        joinCommunity: function () {
+        joinCommunity() {
           const that = this
           mui.prompt('', '请输入群号', '加群', ['取消', '确认'], function (e) {
             if (e.index === 1) {
@@ -403,7 +403,7 @@
         }
       },
       watch: {
-        'win': function (n, o) {
+        'win': (n, o) => {
           // console.log("watch",o,n)
           if (n !== 'main') {
             document.getElementById('menubar').style.display = 'none'
