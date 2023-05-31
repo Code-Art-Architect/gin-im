@@ -59,7 +59,7 @@ func UpdateUser(user UserBasic) *gorm.DB {
 		})
 }
 
-func FindUserById(id int) UserBasic {
+func FindUserById(id uint) UserBasic {
 	var user UserBasic
 	util.DB.Where("id = ?", id).First(&user)
 	return user

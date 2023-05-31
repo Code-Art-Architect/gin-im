@@ -106,8 +106,9 @@
         showProcess: false
       },
       created() {
+        checkLogin()
         this.loadFriends()
-        this.loadCommunities()
+        // this.loadCommunities()
         this.loadDouPics()
         const user = userInfo()
         if (!!user) {
@@ -338,35 +339,35 @@
               userId: userId()
             }
           }).then(({ data }) => {
-            this.communities = res.rows || []
+            this.communities = data.rows || []
           })
         },
         addFriend() {
-          const that = this
-          mui.prompt('', '请输入好友ID', '加好友', ['取消', '确认'], function (e) {
+          mui.prompt('', '请输入好友ID', '加好友', ['取消', '确认'], e => {
             if (e.index === 1) {
               if (isNaN(e.value) || e.value <= 0) {
                 mui.toast('格式错误')
               } else {
                 //mui.toast(e.value);
-                that._addFriend(e.value)
+                axios.post('contact/add-friend', { userId: userId(), targetId: e.value }, {
+                  headers: {
+                    'Content-Type': 'x-www-form-urlencoded'
+                  }
+                }).then(({ data }) => {
+                  if (data.code === 200) {
+                    mui.toast('添加成功')
+                    this.loadFriends()
+                  }
+                }).catch(e => {
+                  const { data } = e.response
+                  mui.toast(data.msg)
+                })
               }
             } else {
               //mui.toast('您取消了入库');
             }
           }, 'div')
           document.querySelector('.mui-popup-input input').type = 'number'
-        },
-        _addFriend(dstobj) {
-          const that = this
-          post('contact/addfriend', { dstid: dstobj, userid: userId() }, function (res) {
-            if (res.code === 0) {
-              mui.toast('添加成功')
-              that.loadFriends()
-            } else {
-              mui.toast(res.msg)
-            }
-          })
         },
         _joinCommunity(dstobj) {
           const that = this
@@ -474,6 +475,13 @@
 
     function uploadVideo(uri, blob, fn) {
       uploadBlob(uri, blob, '.mp4', fn)
+    }
+
+    function checkLogin() {
+      const user = userInfo()
+      if (!user) {
+        location.href = '/user/login.shtml'
+      }
     }
   </script>
 {{end}}

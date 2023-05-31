@@ -210,9 +210,36 @@ func FindUser(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	user := model.FindUserById(userId)
+	user := model.FindUserById(uint(userId))
 	c.JSON(http.StatusOK, util.R{
 		Code: http.StatusOK,
 		Data: user,
+	})
+}
+
+func AddFriend(c *gin.Context) {
+	userId, err := strconv.Atoi(c.Query("userId"))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	targetId, err := strconv.Atoi(c.Query("targetId"))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	i := model.AddFriend(uint(userId), uint(targetId))
+	if i == -1 {
+		c.JSON(http.StatusNotFound, util.R{
+			Code: http.StatusNotFound,
+			Msg:  "添加好友失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, util.R{
+		Code: http.StatusOK,
+		Msg:  "添加好友成功",
+		Data: i,
 	})
 }
