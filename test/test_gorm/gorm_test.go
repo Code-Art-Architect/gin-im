@@ -26,10 +26,11 @@ func init() {
 }
 
 func TestMigrate(t *testing.T) {
-	_ = db.AutoMigrate(&model.UserBasic{})
-	_ = db.AutoMigrate(&model.Message{})
-	_ = db.AutoMigrate(&model.Contact{})
-	_ = db.AutoMigrate(&model.GroupBasic{})
+	// _ = db.AutoMigrate(&model.UserBasic{})
+	// _ = db.AutoMigrate(&model.Message{})
+	// _ = db.AutoMigrate(&model.Contact{})
+	// _ = db.AutoMigrate(&model.GroupBasic{})
+	_ = db.AutoMigrate(&model.Community{})
 }
 
 func TestAddUser(t *testing.T) {
