@@ -33,7 +33,7 @@ func SearchFriend(userId uint) []UserBasic {
 	return users
 }
 
-func AddFriend(userId uint, targetId uint) int {
+func AddFriend(userId uint, targetId uint) (int, string) {
 	if targetId != 0 {
 		targetUser := FindUserById(targetId)
 		if targetUser.Name != "" {
@@ -44,6 +44,13 @@ func AddFriend(userId uint, targetId uint) int {
 					tx.Rollback()
 				}
 			}()
+
+			contact0 := Contact{}
+			util.DB.Where("owner_id = ? and target_id = ? and type = 1", userId, targetId).Find(&contact0)
+			if contact0.ID != 0 {
+				return -1, "不可以重复添加好友"
+			}
+
 			contact := Contact{
 				OwnerId:  userId,
 				TargetId: targetId,
@@ -58,9 +65,9 @@ func AddFriend(userId uint, targetId uint) int {
 			}
 			util.DB.Create(&contact1)
 
-			return 1
+			return 1, ""
 		}
-		return -1
+		return -1, "添加失败"
 	}
-	return -1
+	return -1, "目标不存在"
 }

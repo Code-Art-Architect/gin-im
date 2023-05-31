@@ -217,6 +217,7 @@ func FindUser(c *gin.Context) {
 	})
 }
 
+// 添加好友
 func AddFriend(c *gin.Context) {
 	userId, err := strconv.Atoi(c.PostForm("userId"))
 	if err != nil {
@@ -228,11 +229,19 @@ func AddFriend(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	i := model.AddFriend(uint(userId), uint(targetId))
+	if userId == targetId {
+		c.JSON(http.StatusBadRequest, util.R{
+			Code: http.StatusBadRequest,
+			Msg:  "不可以添加自己的id",
+		})
+		return
+	}
+
+	i, msg := model.AddFriend(uint(userId), uint(targetId))
 	if i == -1 {
 		c.JSON(http.StatusNotFound, util.R{
 			Code: http.StatusNotFound,
-			Msg:  "添加好友失败",
+			Msg:  msg,
 		})
 		return
 	}
