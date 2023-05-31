@@ -64,7 +64,7 @@
       <div class="mui-input-row">
         <label for="type">类型</label>
         <select id="type" v-model="com.cate" class="mui-input-clear mui-input">
-          <option value="0">默认</option>
+          <option value="0" selected>默认</option>
           <option value="1">兴趣爱好</option>
           <option value="2">行业交流</option>
           <option value="3">生活休闲</option>
@@ -101,7 +101,6 @@
             icon: '/asset/images/community.png',
             ownerId: userId()
           }
-
         },
         created() {
           this.com.ownerId = userId()
@@ -114,6 +113,7 @@
             }
             axios.post('/contact/create-community', this.com).then(({ data }) => {
               if (data.code === 200) {
+                this.reset()
                 mui.toast('创建成功')
               } else {
                 mui.toast(data.msg)
@@ -121,6 +121,9 @@
             }).catch(e => {
               mui.toast(e.response.data.msg)
             })
+          },
+          reset() {
+            this.com = {}
           }
         }
       }
@@ -142,7 +145,6 @@
             app.com.icon = res.data
             mui.toast('上传成功')
           }
-
         }
       }
       xhr.open('POST', '/attach/upload')
