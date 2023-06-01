@@ -6,8 +6,10 @@
     <title>IM解决方案</title>
     <link rel="stylesheet" href="/asset/plugins/mui/css/mui.css"/>
     <link rel="stylesheet" href="/asset/css/login.css"/>
+    <link rel="icon" href="/asset/favicon.ico" type="image/x-icon">
     <script src="/asset/plugins/mui/js/mui.js"></script>
     <script src="/asset/js/vue.min.js"></script>
+    <script src="/asset/js/axios.min.js"></script>
     <script src="/asset/js/util.js"></script>
     <script src="/asset/js/store.js"></script>
   </head>
@@ -53,19 +55,19 @@
       },
       methods: {
         login() {
-          core.post('user/login', this.user, {
+          const params = new URLSearchParams(this.user)
+          axios.post('/user/login', params, {
             headers: {
-              'Content-Type': 'x-www-form-urlencoded'
+              'Content-Type': 'application/x-www-form-urlencoded'
             }
-          }).then(res => {
-            console.log(res)
-            if (res.code !== 200) {
-              mui.toast(res.msg)
+          }).then(({ data }) => {
+            console.log(data)
+            if (data.code !== 200) {
+              mui.toast(data.msg)
             } else {
-              const { data } = res
-              userInfo(data)
-              userId(data.ID)
-              location.href = `/index?userId=${data.ID}&token=${data.token}`
+              userInfo(data.data)
+              userId(data.data.id)
+              location.href = `/index`
             }
           })
         }

@@ -260,13 +260,13 @@
           //console.log(user)
           this.win = 'single'
           this.title = '和' + user.name + '聊天中'
-          this.msgContext.targetId = parseInt(user.ID)
+          this.msgContext.targetId = parseInt(user.id)
           this.msgContext.type = 1
         },
         groupMsg(group) {
           this.win = 'group'
           this.title = group.name
-          this.msgContext.targetId = parseInt(group.ID)
+          this.msgContext.targetId = parseInt(group.id)
           this.msgContext.type = 2
         },
         loadUserInfo(userId, cb) {
@@ -325,7 +325,7 @@
             that.friends = data.rows || []
             const userMap = this.userMap
             for (const i in data.rows) {
-              const k = '' + data.rows[i].ID
+              const k = '' + data.rows[i].id
               userMap[k] = data.rows[i]
             }
             this.userMap = userMap
@@ -341,7 +341,7 @@
           })
         },
         addFriend() {
-          mui.prompt('', '请输入好友ID', '加好友', ['取消', '确认'], e => {
+          mui.prompt('', '请输入好友id', '加好友', ['取消', '确认'], e => {
             if (e.index === 1) {
               if (isNaN(e.value) || e.value <= 0) {
                 mui.toast('格式错误')
@@ -368,7 +368,7 @@
           document.querySelector('.mui-popup-input input').type = 'number'
         },
         joinCommunity() {
-          mui.prompt('', '请输入群号', '加群', ['取消', '确认'], function (e) {
+          mui.prompt('', '请输入群号', '加群', ['取消', '确认'], e => {
             if (e.index === 1) {
               if (isNaN(e.value) || e.value <= 0) {
                 mui.toast('格式错误')
@@ -381,11 +381,11 @@
                   }
                 }).then(({ data }) => {
                   if (data.code === 200) {
-                    mui.toast('添加成功')
-                    this.loadCommunities()
-                  } else {
                     mui.toast(data.msg)
+                    this.loadCommunities()
                   }
+                }).catch(e => {
+                  mui.toast(e.response.data.msg)
                 })
               }
             } else {
@@ -402,7 +402,6 @@
       },
       watch: {
         'win': (n, o) => {
-          // console.log("watch",o,n)
           if (n !== 'main') {
             document.getElementById('menubar').style.display = 'none'
           } else {
