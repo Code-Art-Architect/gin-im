@@ -10,7 +10,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"gopkg.in/fatih/set.v0"
-	"gorm.io/gorm"
+
+	"github.com/code-art/gin-im/util"
 )
 
 func init() {
@@ -20,7 +21,7 @@ func init() {
 }
 
 type Message struct {
-	gorm.Model
+	util.Model
 	FromId   int64  `json:"fromId,omitempty"`   // 发送者
 	TargetId int64  `json:"targetId,omitempty"` // 接收者
 	Type     int    `json:"type,omitempty"`     // 发送类型 群聊 私聊 广播

@@ -1,13 +1,11 @@
 package model
 
 import (
-	"gorm.io/gorm"
-
 	"github.com/code-art/gin-im/util"
 )
 
 type Community struct {
-	gorm.Model
+	util.Model
 	Name    string `json:"name,omitempty"`
 	OwnerId uint   `json:"ownerId,omitempty"`
 	Icon    string `json:"icon,omitempty"`

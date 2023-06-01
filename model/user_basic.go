@@ -10,7 +10,7 @@ import (
 )
 
 type UserBasic struct {
-	gorm.Model
+	util.Model
 	Name          string    `json:"name,omitempty"`
 	Password      string    `json:"password,omitempty"`
 	Phone         string    `valid:"matches(^1[3-9]{1}\\d{9}$)" json:"phone,omitempty"`

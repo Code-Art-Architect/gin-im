@@ -1,10 +1,12 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"github.com/code-art/gin-im/util"
+)
 
 // 群信息
 type GroupBasic struct {
-	gorm.Model
+	util.Model
 	Name    string
 	OwnerId uint
 	Icon    string

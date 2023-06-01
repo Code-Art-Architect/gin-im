@@ -3,13 +3,11 @@ package model
 import (
 	"fmt"
 
-	"gorm.io/gorm"
-
 	"github.com/code-art/gin-im/util"
 )
 
 type Contact struct {
-	gorm.Model
+	util.Model
 	OwnerId  uint   // 谁的关系信息
 	TargetId uint   // 对应的谁
 	Type     int    // 对应的类型 0 1 3
