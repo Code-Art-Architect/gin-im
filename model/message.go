@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"gopkg.in/fatih/set.v0"
+	"gorm.io/gorm"
 
 	"github.com/code-art/gin-im/util"
 )
@@ -184,19 +186,11 @@ func dispatch(bytes []byte) {
 	case 1:
 		sendMsg(msg.TargetId, bytes)
 	case 2:
-		sendGroupMsg()
+		sendGroupMsg(msg.TargetId, bytes)
 	case 3:
 		sendAllMsg()
 	case 4:
 	}
-}
-
-func sendAllMsg() {
-
-}
-
-func sendGroupMsg() {
-
 }
 
 func sendMsg(userId int64, msg []byte) {
@@ -207,4 +201,33 @@ func sendMsg(userId int64, msg []byte) {
 	if ok {
 		node.DataQueue <- msg
 	}
+}
+
+func JoinGroup(userId uint, groupId uint) (int, string) {
+	co := Community{}
+	err := util.DB.Where("id = ?", groupId).First(&co).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return -1, "此群不存在"
+	}
+
+	c := Contact{
+		OwnerId:  userId,
+		TargetId: groupId,
+		Type:     2,
+	}
+	err = util.DB.Where("owner_id = ? and target_id = ? and type = 2", userId, groupId).First(&c).Error
+	if err == nil {
+		return -1, "已经加入此群"
+	}
+
+	util.DB.Create(&c)
+	return 1, "加群成功"
+}
+
+func sendGroupMsg(targetId int64, msg []byte) {
+
+}
+
+func sendAllMsg() {
+
 }

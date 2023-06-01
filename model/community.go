@@ -31,6 +31,13 @@ func CreateCommunity(c Community) (int, string) {
 
 func LoadCommunity(userId uint) []*Community {
 	var data []*Community
-	util.DB.Where("owner_id = ?", userId).Find(&data)
+	var contacts []*Contact
+	var groupIds []uint
+	util.DB.Where("owner_id = ? and type = 2", userId).Find(&contacts)
+	for _, c := range contacts {
+		groupIds = append(groupIds, c.TargetId)
+	}
+
+	util.DB.Where("id in ?", groupIds).Find(&data)
 	return data
 }

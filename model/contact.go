@@ -1,15 +1,13 @@
 package model
 
 import (
-	"fmt"
-
 	"github.com/code-art/gin-im/util"
 )
 
 type Contact struct {
 	util.Model
 	OwnerId  uint   // 谁的关系信息
-	TargetId uint   // 对应的谁
+	TargetId uint   // 对应的谁或者群ID
 	Type     int    // 对应的类型 0 1 3
 	Desc     string // 描述
 }
@@ -22,9 +20,8 @@ func SearchFriend(userId uint) []UserBasic {
 	var contacts []Contact
 	var objIds []uint64
 	var users []UserBasic
-	util.DB.Where("owner_id = ?", userId).Find(&contacts)
+	util.DB.Where("owner_id = ? and type = 1", userId).Find(&contacts)
 	for _, contact := range contacts {
-		fmt.Println(contact)
 		objIds = append(objIds, uint64(contact.TargetId))
 	}
 	util.DB.Where("id in ?", objIds).Find(&users)

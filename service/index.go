@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 
 	"github.com/code-art/gin-im/model"
+	"github.com/code-art/gin-im/util"
 )
 
 // GetIndex
@@ -20,7 +20,7 @@ func GetIndex(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Query("userId"))
 	token := c.Query("token")
 	user := model.UserBasic{
-		Model:    gorm.Model{ID: uint(userId)},
+		Model:    util.Model{ID: uint(userId)},
 		Identity: token,
 	}
 	c.HTML(http.StatusOK, "/chat/index.shtml", user)

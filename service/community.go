@@ -42,3 +42,23 @@ func LoadCommunity(c *gin.Context) {
 		Data: data,
 	})
 }
+
+// 加入群聊
+func JoinGroup(c *gin.Context) {
+	userId, _ := strconv.Atoi(c.PostForm("userId"))
+	groupId, _ := strconv.Atoi(c.PostForm("groupId"))
+
+	i, s := model.JoinGroup(uint(userId), uint(groupId))
+	if i == -1 {
+		c.JSON(http.StatusBadRequest, util.R{
+			Code: http.StatusBadRequest,
+			Msg:  s,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, util.R{
+		Code: http.StatusOK,
+		Msg:  s,
+	})
+}

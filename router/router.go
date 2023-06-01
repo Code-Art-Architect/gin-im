@@ -31,6 +31,7 @@ func Router() *gin.Engine {
 	r.POST("/contact/add-friend", service.AddFriend)
 	r.POST("/contact/create-community", service.CreateCommunity)
 	r.GET("/contact/load-communities", service.LoadCommunity)
+	r.POST("/contact/join-group", service.JoinGroup)
 
 	// 通用页面跳转
 	r.GET("/:path1/:path2.shtml", func(c *gin.Context) {
