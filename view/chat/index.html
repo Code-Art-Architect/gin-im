@@ -224,10 +224,9 @@
           data.msg = msg
           this.msgList = this.msgList.concat(data)
           this.reset()
-          const that = this
-          that.timer = setTimeout(function () {
+          this.timer = setTimeout(() => {
             window.scrollTo(0, document.getElementById('convo').offsetHeight)
-            clearTimeout(that.timer)
+            clearTimeout(this.timer)
           }, 100)
         },
         startRecord() {
@@ -273,23 +272,23 @@
           userId = '' + userId
           const u = this.userMap[userId]
           if (!u) {
-            console.log('ccccc')
             axios.get('/user/find', {
               params: {
                 userId: userId
               }
             }).then(({ data }) => {
-              cb(data)
-              this.userMap[userId] = data
+              cb(data.data)
+              this.userMap[userId] = data.data
             })
           } else {
             cb(u)
           }
         },
         onMessage(data) {
-          console.log(data)
           this.loadUserInfo(data.userId, user => {
-            this.showMsg(user, data)
+            if (user.id !== userId()) {
+              this.showMsg(user, data)
+            }
           })
         },
         initWebSocket() {
@@ -395,9 +394,19 @@
           document.querySelector('.mui-popup-input input').type = 'number'
         },
         quit() {
-          sessionStorage.removeItem('userid')
-          sessionStorage.removeItem('userinfo')
-          location.href = 'login.shtml'
+          sessionStorage.removeItem('userId')
+          sessionStorage.removeItem('userInfo')
+          location.href = '/user/login.shtml'
+        },
+        ifShow(item) {
+          if (!item.msg.type === this.msgContext.type) {
+            return false
+          }
+          if (item.msg.type === 1) {
+            return item.isMine ? item.msg.userId === this.msgContext.userId : item.msg.targetId === this.msgContext.targetId
+          } else if (item.msg.type === 2) {
+            return item.msg.targetId === this.msgContext.targetId
+          }
         }
       },
       watch: {
@@ -440,7 +449,6 @@
         }
       }).then(({ data }) => {
         if (data.code === 200) {
-          console.log('上传成功')
           app.sendPicMsg(data.data)
         }
       }).catch(error => {

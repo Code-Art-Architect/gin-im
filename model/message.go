@@ -225,7 +225,11 @@ func JoinGroup(userId uint, groupId uint) (int, string) {
 }
 
 func sendGroupMsg(targetId int64, msg []byte) {
-
+	fmt.Println("发送群消息")
+	userIds := FindUserByGroupId(uint(targetId))
+	for _, id := range userIds {
+		sendMsg(int64(id), msg)
+	}
 }
 
 func sendAllMsg() {
