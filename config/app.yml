@@ -9,3 +9,9 @@ redis:
   poolSize: 30
   minIdleConnection: 30
   
+oos:
+  endpoint: oss-cn-shanghai.aliyuncs.com
+  accessKeyId: LTAI4G3DN5kdk7jbe9hGfEuc
+  accessKeySecret: 7RzUrCyhsH1aAWFLRaAMtsONb3V0RG
+  bucket: codeart-oss
+  accessAddress: https://codeart-oss.oss-cn-shanghai.aliyuncs.com
