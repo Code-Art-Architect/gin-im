@@ -41,9 +41,6 @@ func (table *Message) TableName() string {
 	return "message"
 }
 
-// 最大心跳时间
-const HeartbeatMaxTime = time.Minute
-
 type Node struct {
 	Conn          *websocket.Conn // 连接
 	Addr          string          // 客户端地址
@@ -129,8 +126,20 @@ func receiveProc(node *Node) {
 			fmt.Println(err)
 			return
 		}
-		broadMsg(data)
-		fmt.Println("[ws] receiveProc <<<<<", string(data))
+		msg := Message{}
+		err = json.Unmarshal(data, &msg)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		// 心跳检测
+		if msg.Type == 0 {
+			currentTime := uint64(time.Now().Unix())
+			node.Heartbeat(currentTime)
+		} else {
+			broadMsg(data)
+			fmt.Println("[ws] receiveProc <<<<<", string(data))
+		}
 	}
 }
 
@@ -202,7 +211,6 @@ func dispatch(bytes []byte) {
 		sendGroupMsg(msg.TargetId, bytes)
 	case 3:
 		sendAllMsg()
-	case 4:
 	}
 }
 
@@ -211,8 +219,16 @@ func sendMsg(userId int64, msg []byte) {
 	rwLocker.RLock()
 	node, ok := clientMap[userId]
 	rwLocker.RUnlock()
-	if ok {
-		node.DataQueue <- msg
+
+	var m Message
+	_ = json.Unmarshal(msg, &m)
+	if m.Media == -1 {
+		currentTime := uint64(time.Now().Unix())
+		node.Heartbeat(currentTime)
+	} else {
+		if ok {
+			node.DataQueue <- msg
+		}
 	}
 }
 

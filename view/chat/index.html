@@ -108,6 +108,10 @@
         this.loadFriends()
         this.loadCommunities()
         this.loadDouPics()
+        setInterval(() => {
+          heartbeat()
+        }, 6000)
+        
         const user = userInfo()
         if (!!user) {
           this.profile.avatar = user.avatar
@@ -485,6 +489,14 @@
       if (!user) {
         location.href = '/user/login.shtml'
       }
+    }
+    
+    function heartbeat() {
+      console.log("发送心跳...")
+      const msg = app.createMsgContext()
+      msg.type = 0
+      msg.content = "heartbeat"
+      app.webSocket.send(JSON.stringify(msg))
     }
   </script>
 {{end}}

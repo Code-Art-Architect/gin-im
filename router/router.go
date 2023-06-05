@@ -54,5 +54,8 @@ func Router() *gin.Engine {
 	// 上传文件
 	r.POST("/attach/upload", service.Upload)
 
+	// 心跳检测
+	r.POST("/user/heartbeat", service.Heartbeat)
+
 	return r
 }

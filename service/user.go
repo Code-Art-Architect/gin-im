@@ -252,3 +252,8 @@ func AddFriend(c *gin.Context) {
 		Data: i,
 	})
 }
+
+func Heartbeat(c *gin.Context) {
+	// currentTime := uint64(time.Now().Unix())
+
+}
