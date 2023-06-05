@@ -13,6 +13,16 @@ import (
 )
 
 func Upload(c *gin.Context) {
+	UploadToOSS(c)
+}
+
+// 上传到阿里云OSS
+func UploadToOSS(c *gin.Context) {
+
+}
+
+// 上传到本地
+func UploadToLocal(c *gin.Context) {
 	srcFile, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

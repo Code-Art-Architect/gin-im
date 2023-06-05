@@ -315,13 +315,12 @@
 
         },
         loadFriends() {
-          const that = this
           axios.get('contact/load-friends', {
             params: {
               userId: userId()
             }
           }).then(({ data }) => {
-            that.friends = data.rows || []
+            this.friends = data.rows || []
             const userMap = this.userMap
             for (const i in data.rows) {
               const k = '' + data.rows[i].id
