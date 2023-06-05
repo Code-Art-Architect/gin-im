@@ -1,31 +1,10 @@
 package util
 
 import (
-	"fmt"
 	"time"
 )
 
 type TimerFunc func(any) bool
-
-func InitTimer() {
-	Timer(time.Second*3, time.Second*6, clearConnection, "")
-}
-
-func clearConnection(params any) (ans bool) {
-	ans = false
-	defer func() {
-		if e := recover(); e != nil {
-			fmt.Println("clean connections err: ", e)
-		}
-	}()
-	fmt.Println("定时任务: 清理超时连接", params)
-	ClearTimedOutConnections()
-	return ans
-}
-
-func ClearTimedOutConnections() {
-	fmt.Println("......")
-}
 
 // delay: 首次延迟
 // tick: 间隔

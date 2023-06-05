@@ -256,7 +256,6 @@
           this.webSocket.send(JSON.stringify(msg))
         },
         singleMsg(user) {
-          //console.log(user)
           this.win = 'single'
           this.title = '和' + user.name + '聊天中'
           this.msgContext.targetId = parseInt(user.id)
@@ -398,11 +397,11 @@
           location.href = '/user/login.shtml'
         },
         ifShow(item) {
-          if (!item.msg.type === this.msgContext.type) {
+          if (item.msg.type !== this.msgContext.type) {
             return false
           }
           if (item.msg.type === 1) {
-            return item.isMine ? item.msg.userId === this.msgContext.userId : item.msg.targetId === this.msgContext.targetId
+            return item.isMine ? item.msg.userId === this.msgContext.userId : item.msg.targetId === this.msgContext.userId
           } else if (item.msg.type === 2) {
             return item.msg.targetId === this.msgContext.targetId
           }

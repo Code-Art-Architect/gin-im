@@ -15,3 +15,8 @@ oos:
   accessKeySecret: 7RzUrCyhsH1aAWFLRaAMtsONb3V0RG
   bucket: codeart-oss
   accessAddress: https://codeart-oss.oss-cn-shanghai.aliyuncs.com
+  
+task:
+  delayHeartbeat: 3 # 首次延迟多久检测
+  heartbeatHz: 6 # 检测频率
+  heartbeatMaxTime: 30 # 最大超时 就下线  

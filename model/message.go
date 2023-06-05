@@ -8,8 +8,10 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/spf13/viper"
 	"gopkg.in/fatih/set.v0"
 	"gorm.io/gorm"
 
@@ -39,10 +41,17 @@ func (table *Message) TableName() string {
 	return "message"
 }
 
+// 最大心跳时间
+const HeartbeatMaxTime = time.Minute
+
 type Node struct {
-	Conn      *websocket.Conn
-	DataQueue chan []byte
-	GroupSets set.Interface
+	Conn          *websocket.Conn // 连接
+	Addr          string          // 客户端地址
+	FirstTime     uint64          // 首次连接时间
+	HeartbeatTime uint64          // 心跳时间
+	LoginTime     uint64          // 登录时间
+	DataQueue     chan []byte     // 消息
+	GroupSets     set.Interface   // 群
 }
 
 // 映射关系
@@ -74,10 +83,14 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2.获取conn
+	currentTime := uint64(time.Now().Unix())
 	node := &Node{
-		Conn:      conn,
-		DataQueue: make(chan []byte, 50),
-		GroupSets: set.New(set.ThreadSafe),
+		Conn:          conn,
+		Addr:          conn.RemoteAddr().String(),
+		HeartbeatTime: currentTime,
+		LoginTime:     currentTime,
+		DataQueue:     make(chan []byte, 50),
+		GroupSets:     set.New(set.ThreadSafe),
 	}
 
 	// 3.用户关系
@@ -234,4 +247,39 @@ func sendGroupMsg(targetId int64, msg []byte) {
 
 func sendAllMsg() {
 
+}
+
+// 更新用户心跳
+func (n *Node) Heartbeat(currentTime uint64) {
+	n.HeartbeatTime = currentTime
+	return
+}
+
+// 判断用户心跳是否超时
+func (n *Node) IsHeartbeatTimeOut(currentTime uint64) (timeout bool) {
+	heartbeatMaxTime := viper.GetUint64("task.heartbeatMaxTime")
+	if n.HeartbeatTime+heartbeatMaxTime <= currentTime {
+		fmt.Println("心跳超时...自动下线")
+		timeout = true
+	}
+	return
+}
+
+func ClearConnection(params any) (ans bool) {
+	ans = true
+	defer func() {
+		if e := recover(); e != nil {
+			fmt.Println("clean connections err: ", e)
+		}
+	}()
+	fmt.Println("定时任务: 清理超时连接", params)
+	currentTime := uint64(time.Now().Unix())
+	for k := range clientMap {
+		node := clientMap[k]
+		if node.IsHeartbeatTimeOut(currentTime) {
+			fmt.Println("心跳超时...关闭连接")
+			_ = node.Conn.Close()
+		}
+	}
+	return ans
 }
