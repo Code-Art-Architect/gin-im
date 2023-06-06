@@ -22,6 +22,9 @@
   </body>
   </html>
   <script>
+    // 记录历史消息是否加载的Set，key是targetId
+    const historySet = new Set()
+    
     const app = new Vue({
       el: '#app',
       data: {
@@ -111,7 +114,7 @@
         setInterval(() => {
           heartbeat()
         }, 10000)
-        
+
         const user = userInfo()
         if (!!user) {
           this.profile.avatar = user.avatar
@@ -264,6 +267,11 @@
           this.title = '和' + user.name + '聊天中'
           this.msgContext.targetId = parseInt(user.id)
           this.msgContext.type = 1
+          // 表示没有加载该目标的历史消息
+          if (!historySet.has(this.msgContext.targetId)) {
+            this.loadHistory()
+            historySet.add(this.msgContext.targetId)
+          }
         },
         groupMsg(group) {
           this.win = 'group'
@@ -406,12 +414,24 @@
             return false
           }
           if (item.msg.type === 1) {
-            return item.isMine ? 
+            return item.isMine ?
               item.msg.targetId === this.msgContext.targetId :
               item.msg.targetId === this.msgContext.userId && item.msg.userId === this.msgContext.targetId
           } else if (item.msg.type === 2) {
             return item.msg.targetId === this.msgContext.targetId
           }
+        },
+        loadHistory() {
+          axios.get('/user/history', {
+            params: {
+              userId: userId(),
+              targetId: this.msgContext.targetId
+            }
+          }).then(({ data }) => {
+            if (data.code === 200) {
+              console.log(data.msg)
+            }
+          })
         }
       },
       watch: {
@@ -493,14 +513,14 @@
         location.href = '/user/login.shtml'
       }
     }
-    
+
     function heartbeat() {
       // 失去连接状态码是3
       if (app.webSocket.readyState === 1) {
-        console.log("发送心跳...")
+        console.log('发送心跳...')
         const msg = app.createMsgContext()
         msg.type = 0
-        msg.content = "heartbeat"
+        msg.content = 'heartbeat'
         app.webSocket.send(JSON.stringify(msg))
       }
     }
