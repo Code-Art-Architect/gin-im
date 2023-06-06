@@ -46,6 +46,8 @@ func Router() *gin.Engine {
 	r.PUT("/user/update", service.UpdateUser)
 	r.POST("/user/login", service.Login)
 	r.GET("/user/find", service.FindUser)
+	// 查询历史缓存消息
+	r.GET("/user/history", service.RedisMessage)
 
 	// 发送消息
 	r.GET("/user/msg", service.SendMessage)
@@ -54,8 +56,8 @@ func Router() *gin.Engine {
 	// 上传文件
 	r.POST("/attach/upload", service.Upload)
 
-	// 心跳检测
-	r.POST("/user/heartbeat", service.Heartbeat)
+	// 心跳检测不合适  因为Node  所以前端发过来的消息再receProc里面处理
+	// r.POST("/user/heartbeat", service.Heartbeat)
 
 	return r
 }

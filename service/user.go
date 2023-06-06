@@ -253,7 +253,12 @@ func AddFriend(c *gin.Context) {
 	})
 }
 
-func Heartbeat(c *gin.Context) {
-	// currentTime := uint64(time.Now().Unix())
-
+func RedisMessage(c *gin.Context) {
+	userId, _ := strconv.Atoi(c.Query("userId"))
+	targetId, _ := strconv.Atoi(c.Query("targetId"))
+	model.RedisMessage(int64(userId), int64(targetId))
+	c.JSON(http.StatusOK, util.R{
+		Code: http.StatusOK,
+		Msg:  "历史缓存消息",
+	})
 }

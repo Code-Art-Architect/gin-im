@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
 	"gopkg.in/fatih/set.v0"
@@ -27,15 +28,17 @@ func init() {
 
 type Message struct {
 	util.Model
-	FromId   int64  `json:"fromId,omitempty"`   // 发送者
-	TargetId int64  `json:"targetId,omitempty"` // 接收者
-	Type     int    `json:"type,omitempty"`     // 发送类型 群聊 私聊 广播
-	Media    int    `json:"media,omitempty"`    // 消息类型 文字 图片 音频
-	Content  string `json:"content,omitempty"`  // 消息内容
-	Pic      string `json:"pic,omitempty"`
-	Url      string `json:"url,omitempty"`
-	Desc     string `json:"desc,omitempty"`
-	Amount   int    `json:"amount,omitempty"` // 其他数字统计
+	FromId    int64  `json:"userId,omitempty"`   // 发送者
+	TargetId  int64  `json:"targetId,omitempty"` // 接收者
+	Type      int    `json:"type,omitempty"`     // 发送类型 群聊 私聊 广播
+	Media     int    `json:"media,omitempty"`    // 消息类型 文字 图片 音频
+	Content   string `json:"content,omitempty"`  // 消息内容
+	Pic       string `json:"pic,omitempty"`
+	Url       string `json:"url,omitempty"`
+	Desc      string `json:"desc,omitempty"`
+	Amount    int    `json:"amount,omitempty"`    // 其他数字统计
+	CreatedAt uint64 `json:"createdAt,omitempty"` // 创建时间
+	ReadAt    uint64 `json:"readAt,omitempty"`    // 已读时间
 }
 
 func (table *Message) TableName() string {
@@ -59,6 +62,8 @@ var clientMap = make(map[int64]*Node, 0)
 var rwLocker sync.RWMutex
 
 const onlinePrefix = "online:"
+
+const historyMsgPrefix = "msg"
 
 func Chat(w http.ResponseWriter, r *http.Request) {
 	// 1.获取参数并校验token
@@ -106,9 +111,11 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 	go receiveProc(node)
 
 	// 加入在线用户到缓存
-	key := fmt.Sprintf("%s%d", onlinePrefix, userId)
-	redisOnlineTime := viper.GetInt("task.redisOnlineTime")
-	SetUserOnlineInfo(key, []byte(node.Addr), time.Duration(redisOnlineTime)*time.Hour)
+	if userId != 0 {
+		key := fmt.Sprintf("%s%d", onlinePrefix, userId)
+		redisOnlineTime := viper.GetInt("task.redisOnlineTime")
+		SetObjToRedis(key, []byte(node.Addr), time.Duration(redisOnlineTime)*time.Hour)
+	}
 
 	sendMsg(userId, []byte("欢迎进入聊天室"))
 }
@@ -206,7 +213,9 @@ func udpReceiveProc() {
 
 // 后端调度逻辑
 func dispatch(bytes []byte) {
-	msg := Message{}
+	msg := Message{
+		CreatedAt: uint64(time.Now().Unix()),
+	}
 	err := json.Unmarshal(bytes, &msg)
 	if err != nil {
 		fmt.Println(err)
@@ -242,6 +251,24 @@ func sendMsg(userId int64, msg []byte) {
 			node.DataQueue <- msg
 		}
 	}
+
+	// 欢迎进入聊天室消息不做持久化
+	if msgJSON.TargetId == int64(0) {
+		return
+	}
+
+	// 保证两个用户共用一个Key
+	if msgJSON.FromId > msgJSON.TargetId {
+		msgJSON.FromId, msgJSON.TargetId = msgJSON.TargetId, msgJSON.FromId
+	}
+	msgKey := fmt.Sprintf("msg:%d:%d", msgJSON.FromId, msgJSON.TargetId)
+	_, err = util.Redigo.ZAdd(ctx, msgKey, &redis.Z{
+		Score:  1,
+		Member: msg,
+	}).Result()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func JoinGroup(userId uint, groupId uint) (int, string) {
@@ -269,7 +296,10 @@ func sendGroupMsg(targetId int64, msg []byte) {
 	fmt.Println("发送群消息")
 	userIds := FindUserByGroupId(uint(targetId))
 	for _, id := range userIds {
-		sendMsg(int64(id), msg)
+		// 排除给自己发消息
+		if uint(targetId) != id {
+			sendMsg(int64(id), msg)
+		}
 	}
 }
 
@@ -310,4 +340,28 @@ func ClearConnection(params any) (ans bool) {
 		}
 	}
 	return ans
+}
+
+func RedisMessage(fromId int64, targetId int64) {
+	rwLocker.RLock()
+	node, _ := clientMap[fromId]
+	rwLocker.RUnlock()
+
+	// 保证两个用户共用一个Key
+	var key string
+	if fromId > targetId {
+		key = fmt.Sprintf("%s:%d:%d", historyMsgPrefix, targetId, fromId)
+	} else {
+		key = fmt.Sprintf("%s:%d:%d", historyMsgPrefix, fromId, targetId)
+	}
+
+	ctx := context.Background()
+	msgSlice, err := util.Redigo.ZRange(ctx, key, 0, 10).Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, msg := range msgSlice {
+		node.DataQueue <- []byte(msg)
+	}
 }

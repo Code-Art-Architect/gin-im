@@ -110,7 +110,7 @@
         this.loadDouPics()
         setInterval(() => {
           heartbeat()
-        }, 6000)
+        }, 10000)
         
         const user = userInfo()
         if (!!user) {
@@ -289,9 +289,10 @@
         },
         onMessage(data) {
           this.loadUserInfo(data.userId, user => {
-            if (user.id !== userId()) {
-              this.showMsg(user, data)
-            }
+            // if (user.id !== userId()) {
+            //   this.showMsg(user, data)
+            // }
+            this.showMsg(user, data)
           })
         },
         initWebSocket() {
