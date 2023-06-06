@@ -57,6 +57,8 @@ var clientMap = make(map[int64]*Node, 0)
 // 读写锁
 var rwLocker sync.RWMutex
 
+const onlinePrefix = "online:"
+
 func Chat(w http.ResponseWriter, r *http.Request) {
 	// 1.获取参数并校验token
 	// token := query.Get("token")
@@ -101,6 +103,11 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 
 	// 6.完成接收逻辑
 	go receiveProc(node)
+
+	// 加入在线用户到缓存
+	key := fmt.Sprintf("%s%d", onlinePrefix, userId)
+	redisOnlineTime := viper.GetInt("task.redisOnlineTime")
+	SetUserOnlineInfo(key, []byte(node.Addr), time.Duration(redisOnlineTime)*time.Hour)
 
 	sendMsg(userId, []byte("欢迎进入聊天室"))
 }

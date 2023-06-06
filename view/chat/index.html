@@ -405,7 +405,9 @@
             return false
           }
           if (item.msg.type === 1) {
-            return item.isMine ? item.msg.userId === this.msgContext.userId : item.msg.targetId === this.msgContext.userId
+            return item.isMine ? 
+              item.msg.userId === this.msgContext.userId && item.msg.targetId === this.msgContext.targetId :
+              item.msg.targetId === this.msgContext.userId && item.msg.userId === this.msgContext.targetId
           } else if (item.msg.type === 2) {
             return item.msg.targetId === this.msgContext.targetId
           }
