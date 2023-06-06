@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -227,12 +228,16 @@ func sendMsg(userId int64, msg []byte) {
 	node, ok := clientMap[userId]
 	rwLocker.RUnlock()
 
-	var m Message
-	_ = json.Unmarshal(msg, &m)
-	if m.Media == -1 {
-		currentTime := uint64(time.Now().Unix())
-		node.Heartbeat(currentTime)
-	} else {
+	msgJSON := Message{}
+	_ = json.Unmarshal(msg, &msgJSON)
+
+	key := fmt.Sprintf("%s%d", onlinePrefix, msgJSON.TargetId)
+	ctx := context.Background()
+	r, err := util.Redigo.Get(ctx, key).Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+	if r != "" {
 		if ok {
 			node.DataQueue <- msg
 		}

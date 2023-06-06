@@ -494,11 +494,14 @@
     }
     
     function heartbeat() {
-      console.log("发送心跳...")
-      const msg = app.createMsgContext()
-      msg.type = 0
-      msg.content = "heartbeat"
-      app.webSocket.send(JSON.stringify(msg))
+      // 失去连接状态码是3
+      if (app.webSocket.readyState === 1) {
+        console.log("发送心跳...")
+        const msg = app.createMsgContext()
+        msg.type = 0
+        msg.content = "heartbeat"
+        app.webSocket.send(JSON.stringify(msg))
+      }
     }
   </script>
 {{end}}

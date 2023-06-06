@@ -18,6 +18,6 @@ oos:
   
 task:
   delayHeartbeat: 3 # 首次延迟多久检测
-  heartbeatHz: 6 # 检测频率
-  heartbeatMaxTime: 30 # 最大超时 就下线
+  heartbeatHz: 30 # 检测频率
+  heartbeatMaxTime: 3000 # 最大超时 就下线
   redisOnlineTime: 4 # 缓存的在线用户时长 单位 h
