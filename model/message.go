@@ -164,11 +164,13 @@ func broadMsg(data []byte) {
 	udpSendChan <- data
 }
 
+var udpPort = viper.GetInt("server.port.udp")
+
 // 完成udp数据发送协程
 func udpSendProc() {
 	con, err := net.DialUDP("udp", nil, &net.UDPAddr{
 		IP:   net.IPv4(127, 0, 0, 1),
-		Port: 3000,
+		Port: udpPort,
 	})
 	defer con.Close()
 	if err != nil {
@@ -192,7 +194,7 @@ func udpSendProc() {
 func udpReceiveProc() {
 	con, err := net.ListenUDP("udp", &net.UDPAddr{
 		IP:   net.IPv4zero,
-		Port: 3000,
+		Port: udpPort,
 	})
 	if err != nil {
 		fmt.Println(err)

@@ -10,6 +10,8 @@ import (
 	"github.com/code-art/gin-im/util"
 )
 
+var httpPort = viper.GetString("server.port.http")
+
 func InitTimer() {
 	delayHeartbeat := viper.GetInt64("task.delayHeartbeat")
 	heartbeatHz := viper.GetInt("task.heartbeatHz")
@@ -23,5 +25,5 @@ func main() {
 	InitTimer()
 
 	r := router.Router()
-	_ = r.Run(":8080")
+	_ = r.Run(":" + httpPort)
 }
