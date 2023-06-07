@@ -225,10 +225,11 @@
           mui.alert('请加微信号jiepool-winlion索取')
         },
         showMsg(user, msg) {
-          const data = {}
-          data.isMine = userId() === msg.userId
-          data.user = user
-          data.msg = msg
+          const data = {
+            isMine: userId() === msg.userId,
+            user,
+            msg
+          }
           this.msgList.push(data)
           // this.msgList.sort((a, b) => a.msg.timeStamp - b.msg.timeStamp)
           this.reset()
@@ -444,7 +445,9 @@
             }
           }).then(({ data }) => {
             if (data.code === 200) {
-              console.log(data.msg)
+              data.data.map(v => JSON.parse(v)).forEach(msg => {
+                this.showMsg(userInfo(), msg)
+              })
             }
           })
         }

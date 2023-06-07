@@ -256,9 +256,10 @@ func AddFriend(c *gin.Context) {
 func RedisMessage(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Query("userId"))
 	targetId, _ := strconv.Atoi(c.Query("targetId"))
-	model.RedisMessage(int64(userId), int64(targetId))
+	messages := model.RedisMessage(int64(userId), int64(targetId))
 	c.JSON(http.StatusOK, util.R{
 		Code: http.StatusOK,
+		Data: messages,
 		Msg:  "历史缓存消息",
 	})
 }

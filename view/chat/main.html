@@ -6,7 +6,7 @@
     </header>
     <div id="convo" data-from="Sonu Joshi">
       <ul class="chat-thread">
-        <li class="chat" :class="item.isMine? 'mine' : 'other'"
+        <li class="chat" :class="item.isMine ? 'mine' : 'other'"
             v-for="item in msgList"
             v-if="ifShow(item)">
           <div>

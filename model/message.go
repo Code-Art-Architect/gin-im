@@ -364,9 +364,9 @@ func ClearConnection(params any) (ans bool) {
 	return ans
 }
 
-func RedisMessage(fromId int64, targetId int64) {
+func RedisMessage(fromId int64, targetId int64) []string {
 	rwLocker.RLock()
-	node, ok := clientMap[fromId]
+	// node, ok := clientMap[fromId]
 	rwLocker.RUnlock()
 
 	// 保证两个用户共用一个Key
@@ -388,9 +388,12 @@ func RedisMessage(fromId int64, targetId int64) {
 		fmt.Println(err)
 	}
 
-	if ok {
-		for _, msg := range msgSlice {
-			node.DataQueue <- []byte(msg)
-		}
-	}
+	// 通过ajax推送给前端
+	return msgSlice
+
+	// if ok {
+	// 	for _, msg := range msgSlice {
+	// 		node.DataQueue <- []byte(msg)
+	// 	}
+	// }
 }
