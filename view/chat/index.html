@@ -274,7 +274,7 @@
           this.msgContext.type = 1
           // 表示没有加载该目标的历史消息
           if (!historySet.has(this.msgContext.targetId)) {
-            this.loadHistory()
+            this.loadHistory(user)
             historySet.add(this.msgContext.targetId)
           }
         },
@@ -437,7 +437,7 @@
             return item.msg.targetId === this.msgContext.targetId
           }
         },
-        loadHistory() {
+        loadHistory(user) {
           axios.get('/user/history', {
             params: {
               userId: userId(),
@@ -446,7 +446,12 @@
           }).then(({ data }) => {
             if (data.code === 200) {
               data.data.map(v => JSON.parse(v)).forEach(msg => {
-                this.showMsg(userInfo(), msg)
+                console.log(msg)
+                if (msg.userId === userId()) {
+                  this.showMsg(userInfo(), msg)
+                } else {
+                  this.showMsg(user, msg)
+                }
               })
             }
           })
