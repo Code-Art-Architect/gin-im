@@ -231,7 +231,6 @@
             msg
           }
           this.msgList.push(data)
-          // this.msgList.sort((a, b) => a.msg.timeStamp - b.msg.timeStamp)
           this.reset()
           this.timer = setTimeout(() => {
             window.scrollTo(0, document.getElementById('convo').offsetHeight)
