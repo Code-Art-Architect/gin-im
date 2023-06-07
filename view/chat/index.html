@@ -229,7 +229,8 @@
           data.isMine = userId() === msg.userId
           data.user = user
           data.msg = msg
-          this.msgList = this.msgList.concat(data)
+          this.msgList.push(data)
+          // this.msgList.sort((a, b) => a.msg.timeStamp - b.msg.timeStamp)
           this.reset()
           this.timer = setTimeout(() => {
             window.scrollTo(0, document.getElementById('convo').offsetHeight)
@@ -243,6 +244,7 @@
           const msg = this.createMsgContext()
           msg.media = 1
           msg.content = txt
+          msg.timeStamp = Date.now()
           this.showMsg(userInfo(), msg)
           this.webSocket.send(JSON.stringify(msg))
         },
@@ -251,6 +253,7 @@
           const msg = this.createMsgContext()
           msg.media = 4
           msg.url = picurl
+          msg.timeStamp = Date.now()
           this.showMsg(userInfo(), msg)
           this.webSocket.send(JSON.stringify(msg))
         },
@@ -259,6 +262,7 @@
           msg.media = 3
           msg.url = url
           msg.amount = num
+          msg.timeStamp = Date.now()
           this.showMsg(userInfo(), msg)
           this.webSocket.send(JSON.stringify(msg))
         },

@@ -25,7 +25,6 @@ func InitConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("config app: ", viper.Get("app"))
 	fmt.Println("config mysql: ", viper.Get("mysql"))
 }
 

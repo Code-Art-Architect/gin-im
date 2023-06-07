@@ -20,7 +20,7 @@ import (
 	"github.com/code-art/gin-im/util"
 )
 
-func init() {
+func InitUDP() {
 	go udpSendProc()
 	go udpReceiveProc()
 	fmt.Println("init goroutine ")
@@ -37,7 +37,7 @@ type Message struct {
 	Url       string `json:"url,omitempty"`
 	Desc      string `json:"desc,omitempty"`
 	Amount    int    `json:"amount,omitempty"`    // 其他数字统计
-	CreatedAt uint64 `json:"createdAt,omitempty"` // 创建时间
+	TimeStamp uint64 `json:"timeStamp,omitempty"` // 创建时间
 	ReadAt    uint64 `json:"readAt,omitempty"`    // 已读时间
 }
 
@@ -164,18 +164,16 @@ func broadMsg(data []byte) {
 	udpSendChan <- data
 }
 
-var udpPort = viper.GetInt("server.port.udp")
-
 // 完成udp数据发送协程
 func udpSendProc() {
 	con, err := net.DialUDP("udp", nil, &net.UDPAddr{
 		IP:   net.IPv4(127, 0, 0, 1),
-		Port: udpPort,
+		Port: viper.GetInt("server.port.udp"),
 	})
-	defer con.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
+	defer con.Close()
 
 	for {
 		select {
@@ -194,7 +192,7 @@ func udpSendProc() {
 func udpReceiveProc() {
 	con, err := net.ListenUDP("udp", &net.UDPAddr{
 		IP:   net.IPv4zero,
-		Port: udpPort,
+		Port: viper.GetInt("server.port.udp"),
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -216,7 +214,7 @@ func udpReceiveProc() {
 // 后端调度逻辑
 func dispatch(bytes []byte) {
 	msg := Message{
-		CreatedAt: uint64(time.Now().Unix()),
+		TimeStamp: uint64(time.Now().Unix()),
 	}
 	err := json.Unmarshal(bytes, &msg)
 	if err != nil {
@@ -239,10 +237,13 @@ func sendMsg(userId int64, msg []byte) {
 	node, ok := clientMap[userId]
 	rwLocker.RUnlock()
 
-	msgJSON := Message{}
-	_ = json.Unmarshal(msg, &msgJSON)
+	msgStruct := Message{}
+	_ = json.Unmarshal(msg, &msgStruct)
 
-	key := fmt.Sprintf("%s%d", onlinePrefix, msgJSON.TargetId)
+	// 添加消息时间
+	msgStruct.TimeStamp = uint64(time.Now().Unix())
+
+	key := fmt.Sprintf("%s%d", onlinePrefix, msgStruct.TargetId)
 	ctx := context.Background()
 	r, err := util.Redigo.Get(ctx, key).Result()
 	if err != nil {
@@ -255,17 +256,36 @@ func sendMsg(userId int64, msg []byte) {
 	}
 
 	// 欢迎进入聊天室消息不做持久化
-	if msgJSON.TargetId == int64(0) {
+	if msgStruct.TargetId == int64(0) {
 		return
 	}
 
 	// 保证两个用户共用一个Key
-	if msgJSON.FromId > msgJSON.TargetId {
-		msgJSON.FromId, msgJSON.TargetId = msgJSON.TargetId, msgJSON.FromId
+	if msgStruct.FromId > msgStruct.TargetId {
+		msgStruct.FromId, msgStruct.TargetId = msgStruct.TargetId, msgStruct.FromId
 	}
-	msgKey := fmt.Sprintf("msg:%d:%d", msgJSON.FromId, msgJSON.TargetId)
+
+	msgKey := fmt.Sprintf("msg:%d:%d", msgStruct.FromId, msgStruct.TargetId)
+
+	// 获取分数最大的元素，前提保证元素的分数唯一
+	zSlice, err := util.Redigo.ZRevRangeByScoreWithScores(ctx, msgKey, &redis.ZRangeBy{
+		Min:    "-inf", // 分数范围的下界（负无穷）
+		Max:    "+inf", // 分数范围的上界（正无穷）
+		Offset: 0,      // 结果集的起始位置
+		Count:  1,      // 结果集的元素数量
+	}).Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(zSlice)
+	score := 0.0
+	if len(zSlice) > 0 {
+		score = zSlice[0].Score + 1
+	}
+
 	_, err = util.Redigo.ZAdd(ctx, msgKey, &redis.Z{
-		Score:  1,
+		Score:  score,
 		Member: msg,
 	}).Result()
 	if err != nil {
@@ -346,7 +366,7 @@ func ClearConnection(params any) (ans bool) {
 
 func RedisMessage(fromId int64, targetId int64) {
 	rwLocker.RLock()
-	node, _ := clientMap[fromId]
+	node, ok := clientMap[fromId]
 	rwLocker.RUnlock()
 
 	// 保证两个用户共用一个Key
@@ -358,12 +378,19 @@ func RedisMessage(fromId int64, targetId int64) {
 	}
 
 	ctx := context.Background()
-	msgSlice, err := util.Redigo.ZRange(ctx, key, 0, 10).Result()
+	msgSlice, err := util.Redigo.ZRangeByScore(ctx, key, &redis.ZRangeBy{
+		Min:    "-inf", // 分数范围的下界
+		Max:    "+inf", // 分数范围的上界
+		Offset: 0,      // 结果集的起始位置
+		Count:  10,     // 结果集的最大数量，设置为负数表示获取所有元素
+	}).Result()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	for _, msg := range msgSlice {
-		node.DataQueue <- []byte(msg)
+	if ok {
+		for _, msg := range msgSlice {
+			node.DataQueue <- []byte(msg)
+		}
 	}
 }
