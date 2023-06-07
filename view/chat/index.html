@@ -302,7 +302,10 @@
         },
         onMessage(data) {
           this.loadUserInfo(data.userId, user => {
-            this.showMsg(user, data)
+            // 说明第一次加载过历史消息了
+            if (historySet.has(data.targetId)) {
+              this.showMsg(user, data)
+            }
             this.friends.forEach(v => {
               // 1: 文字  2: 表情包  3: 语音  4: 图片
               if (v.id === data.userId) {
@@ -446,7 +449,6 @@
           }).then(({ data }) => {
             if (data.code === 200) {
               data.data.map(v => JSON.parse(v)).forEach(msg => {
-                console.log(msg)
                 if (msg.userId === userId()) {
                   this.showMsg(userInfo(), msg)
                 } else {
