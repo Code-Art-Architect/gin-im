@@ -24,7 +24,7 @@
   <script>
     // 记录历史消息是否加载的Set，key是targetId
     const historySet = new Set()
-    
+
     const app = new Vue({
       el: '#app',
       data: {
@@ -297,10 +297,21 @@
         },
         onMessage(data) {
           this.loadUserInfo(data.userId, user => {
-            // if (user.id !== userId()) {
-            //   this.showMsg(user, data)
-            // }
             this.showMsg(user, data)
+            this.friends.forEach(v => {
+              // 1: 文字  2: 表情包  3: 语音  4: 图片
+              if (v.id === data.userId) {
+                if (data.media === 1) {
+                  v.memo = data.content
+                } else if (data.media === 2) {
+                  v.memo = '[图片]'
+                } else if (data.media === 3) {
+                  v.memo = '[语音消息]'
+                } else if (data.media === 4) {
+                  v.memo = '[图片]'
+                }
+              }
+            })
           })
         },
         initWebSocket() {

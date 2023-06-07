@@ -31,7 +31,7 @@ type Message struct {
 	FromId    int64  `json:"userId,omitempty"`   // 发送者
 	TargetId  int64  `json:"targetId,omitempty"` // 接收者
 	Type      int    `json:"type,omitempty"`     // 发送类型 群聊 私聊 广播
-	Media     int    `json:"media,omitempty"`    // 消息类型 文字 图片 音频
+	Media     int    `json:"media,omitempty"`    // 消息类型 1: 文字  2: 表情包  3: 语音  4: 图片
 	Content   string `json:"content,omitempty"`  // 消息内容
 	Pic       string `json:"pic,omitempty"`
 	Url       string `json:"url,omitempty"`

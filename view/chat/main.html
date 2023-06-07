@@ -25,10 +25,10 @@
       </ul>
     </div>
     <div class="flex-container">
-      <div class="item-1" @tap="txtStat='audio'" v-if="txtStat=='kbord'">
+      <div class="item-1" @tap="txtStat='audio'" v-if="txtStat === 'kbord'">
         <img src="/asset/images/audio.png" alt=""/>
       </div>
-      <div class="item-1" @tap="txtStat='kbord'" v-if="txtStat=='audio'">
+      <div class="item-1" @tap="txtStat='kbord'" v-if="txtStat === 'audio'">
         <img src="/asset/images/kbord.png" alt=""/>
       </div>
       <div class="item-2" v-if="txtStat=='kbord'">
